@@ -68,19 +68,23 @@ namespace Walterlv.GravityMaze.Game.Models
             if (left && _xSpeed < 0 && _xPosition - _radius < leftPosition)
             {
                 _xSpeed = -_xSpeed * 0.8f;
+                _xPosition = leftPosition + _radius;
             }
             else if (right && _xSpeed > 0 && _xPosition + _radius > rightPosition)
             {
                 _xSpeed = -_xSpeed * 0.8f;
+                _xPosition = rightPosition - _radius;
             }
 
             if (up && _ySpeed < 0 && _yPosition - _radius < upPosition)
             {
                 _ySpeed = -_ySpeed * 0.8f;
+                _yPosition = upPosition + _radius;
             }
             else if (down && _ySpeed > 0 && _yPosition + _radius > downPosition)
             {
                 _ySpeed = -_ySpeed * 0.8f;
+                _yPosition = downPosition - _radius;
             }
 
             // 计算下一帧的速度。
