@@ -62,9 +62,14 @@ namespace Walterlv.GravityMaze.Game.Models
             _xPosition += xOffset;
             _yPosition += yOffset;
 
-            // 进行碰撞检测。
+            // 进行边缘碰撞检测。
+            // +--------+
+            // |   x    |
+            // |        |
+            // +--------+
             var (left, leftPosition, up, upPosition, right, rightPosition, down, downPosition) =
                 GetCellWallInfoByPosition(_xPosition, _yPosition);
+
             if (left && _xSpeed < 0 && _xPosition - _radius < leftPosition)
             {
                 _xSpeed = -_xSpeed * 0.8f;
@@ -86,6 +91,12 @@ namespace Walterlv.GravityMaze.Game.Models
                 _ySpeed = -_ySpeed * 0.8f;
                 _yPosition = downPosition - _radius;
             }
+
+            // 进行拐角碰撞检测。
+            //     |
+            // --- x ---
+            //     |
+            // 未完待续。
 
             // 计算下一帧的速度。
             _xSpeed += (float) (xAcceleration * seconds);
