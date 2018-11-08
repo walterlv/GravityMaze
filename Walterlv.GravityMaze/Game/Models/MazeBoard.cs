@@ -8,13 +8,13 @@ namespace Walterlv.GravityMaze.Game
 {
     public class MazeBoard : GameObject
     {
-        private readonly int _columnCount;
-        private readonly int _rowCount;
         private readonly int[] _mazeData;
+        public int ColumnCount { get; }
+        public int RowCount { get; }
 
-        private Rect _area;
-        private float _cellWidth;
-        private float _cellHeight;
+        public Rect Area;
+        public float CellWidth;
+        public float CellHeight;
 
         public MazeBoard(
             int startRowIndex, int startColumnIndex,
@@ -27,8 +27,8 @@ namespace Walterlv.GravityMaze.Game
 
 
             _mazeData = mazeData;
-            _columnCount = columns;
-            _rowCount = rows;
+            ColumnCount = columns;
+            RowCount = rows;
         }
 
         protected override void OnUpdate(CanvasTimingInformation timing)
@@ -37,29 +37,29 @@ namespace Walterlv.GravityMaze.Game
 
         protected override void OnDraw(CanvasDrawingSession ds)
         {
-            _area = Context.SurfaceBounds;
-            _cellWidth = (float) _area.Width / _columnCount;
-            _cellHeight = (float) _area.Height / _rowCount;
+            Area = Context.SurfaceBounds;
+            CellWidth = (float) Area.Width / ColumnCount;
+            CellHeight = (float) Area.Height / RowCount;
 
-            ds.FillRectangle(_area, Colors.White);
+            ds.FillRectangle(Area, Colors.White);
 
-            for (var i = 0; i < _rowCount; i++)
+            for (var i = 0; i < RowCount; i++)
             {
-                for (var j = 0; j < _columnCount; j++)
+                for (var j = 0; j < ColumnCount; j++)
                 {
                     var (left, top) = GetWallInfo(j, i);
 
-                    var x = (float) (_area.Left + _cellWidth * j);
-                    var y = (float) (_area.Top + _cellHeight * i);
+                    var x = (float) (Area.Left + CellWidth * j);
+                    var y = (float) (Area.Top + CellHeight * i);
 
                     if (left)
                     {
-                        ds.FillRectangle(x - 1, y - 1, 2, _cellHeight + 2, Colors.Black);
+                        ds.FillRectangle(x - 1, y - 1, 2, CellHeight + 2, Colors.Black);
                     }
 
                     if (top)
                     {
-                        ds.FillRectangle(x - 1, y - 1, _cellWidth + 2, 2, Colors.Black);
+                        ds.FillRectangle(x - 1, y - 1, CellWidth + 2, 2, Colors.Black);
                     }
                 }
             }
@@ -68,8 +68,8 @@ namespace Walterlv.GravityMaze.Game
         private (bool left, bool top) GetWallInfo(int column, int row)
         {
             var data = _mazeData[row];
-            var leftFlag = 1 << (_columnCount - column) * 2 + 1;
-            var topFlag = 1 << (_columnCount - column) * 2;
+            var leftFlag = 1 << (ColumnCount - column) * 2 + 1;
+            var topFlag = 1 << (ColumnCount - column) * 2;
             var left = data & leftFlag;
             var top = data & topFlag;
             return (left != 0, top != 0);
