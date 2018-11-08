@@ -68,8 +68,8 @@ namespace Walterlv.GravityMaze.Game
         private (bool left, bool top) GetWallInfo(int column, int row)
         {
             var data = _mazeData[row];
-            var leftFlag = 1 << (_columnCount - column);
-            var topFlag = 1 << (_columnCount - column);
+            var leftFlag = 1 << (_columnCount - column) * 2 + 1;
+            var topFlag = 1 << (_columnCount - column) * 2;
             var left = data & leftFlag;
             var top = data & topFlag;
             return (left != 0, top != 0);
