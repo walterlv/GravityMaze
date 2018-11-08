@@ -28,7 +28,7 @@ namespace Walterlv.GravityMaze.Game
             _mazeData = mazeData;
 
             var columns = (mazeData[0].ToString("X").Length - 1) * 2;
-            var rows = mazeData.Length;
+            var rows = mazeData.Length - 1;
             ColumnCount = columns;
             RowCount = rows;
 

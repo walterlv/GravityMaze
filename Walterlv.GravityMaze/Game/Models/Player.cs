@@ -78,7 +78,7 @@ namespace Walterlv.GravityMaze.Game.Models
             {
                 _ySpeed = -_ySpeed * 0.8f;
             }
-            else if (down && _ySpeed > 0 && _yPosition + _radius > upPosition)
+            else if (down && _ySpeed > 0 && _yPosition + _radius > downPosition)
             {
                 _ySpeed = -_ySpeed * 0.8f;
             }
