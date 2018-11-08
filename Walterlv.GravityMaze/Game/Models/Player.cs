@@ -15,6 +15,7 @@ namespace Walterlv.GravityMaze.Game.Models
         private float _ySpeed;
         private float _xPosition;
         private float _yPosition;
+        private float _radius;
 
         public Player(MazeBoard board)
         {
@@ -25,8 +26,11 @@ namespace Walterlv.GravityMaze.Game.Models
         {
             var seconds = timing.ElapsedTime.TotalSeconds;
 
-            var baseAcceleration = 8000;
-            var resistanceAcceleration = 0;
+            var baseAcceleration = 10f;
+            baseAcceleration = baseAcceleration * Math.Min(_board.CellWidth, _board.CellHeight) * 20;
+            var resistanceAcceleration = 4f;
+            _radius = (float) (Math.Min(_board.CellWidth, _board.CellHeight) * 0.4);
+            var tooSlowSpeed = Math.Min(_board.CellWidth, _board.CellHeight) / 2;
 
             // 计算这一帧的倾斜角度。
             (_xAngle, _yAngle) = GetTiltAngles();
@@ -57,17 +61,54 @@ namespace Walterlv.GravityMaze.Game.Models
             _xPosition += xOffset;
             _yPosition += yOffset;
 
+            // 进行碰撞检测。
+            var (left, leftPosition, up, upPosition, right, rightPosition, down, downPosition) =
+                GetCellWallInfoByPosition(_xPosition, _yPosition);
+            if (left && _xSpeed < 0 && _xPosition - _radius < leftPosition)
+            {
+                _xSpeed = -_xSpeed * 0.8f;
+            }
+            else if (right && _xSpeed > 0 && _xPosition + _radius > rightPosition)
+            {
+                _xSpeed = -_xSpeed * 0.8f;
+            }
+
+            if (up && _ySpeed < 0 && _yPosition - _radius < upPosition)
+            {
+                _ySpeed = -_ySpeed * 0.8f;
+            }
+            else if (down && _ySpeed > 0 && _yPosition + _radius > upPosition)
+            {
+                _ySpeed = -_ySpeed * 0.8f;
+            }
+
             // 计算下一帧的速度。
             _xSpeed += (float) (xAcceleration * seconds);
             _ySpeed += (float) (yAcceleration * seconds);
-            if (_xSpeed < 100 && _xSpeed > -100) _xSpeed = 0;
-            if (_ySpeed < 100 && _ySpeed > -100) _ySpeed = 0;
+            if (xAcceleration == 0 && _xSpeed < tooSlowSpeed && _xSpeed > -tooSlowSpeed) _xSpeed = 0;
+            if (yAcceleration == 0 && _ySpeed < tooSlowSpeed && _ySpeed > -tooSlowSpeed) _ySpeed = 0;
         }
 
         protected override void OnDraw(CanvasDrawingSession ds)
         {
-            var radius = (float) (Math.Min(_board.CellWidth, _board.CellHeight) * 0.4);
-            ds.FillEllipse(_xPosition, _yPosition, radius, radius, Colors.Gray);
+            ds.FillEllipse(_xPosition, _yPosition, _radius, _radius, Colors.Gray);
+        }
+
+        private (bool left, float leftPosition,
+            bool up, float upPosition,
+            bool right, float rightPosition,
+            bool down, float downPosition) GetCellWallInfoByPosition(float xPosition, float yPosition)
+        {
+            var column = (int) ((xPosition - _board.Area.Left) / _board.CellWidth);
+            var row = (int) ((yPosition - _board.Area.Top) / _board.CellHeight);
+            var (left, up) = _board.GetWallInfo(column, row);
+            var right = _board.GetWallInfo(column + 1, row).left;
+            var down = _board.GetWallInfo(column, row + 1).up;
+
+            return (left, (float) (_board.Area.Left + _board.CellWidth * column),
+                up, (float) (_board.Area.Top + _board.CellHeight * row),
+                right, (float) (_board.Area.Left + _board.CellWidth * (column + 1)),
+                down, (float) (_board.Area.Top + _board.CellHeight * (row + 1)));
         }
 
         private (float xAngle, float yAngle) GetTiltAngles()
@@ -78,41 +119,42 @@ namespace Walterlv.GravityMaze.Game.Models
         private (float xAngle, float yAngle) GetTiltAnglesByKeyboard()
         {
             var input = Context.Input;
-            var radianUnit = (float) Math.PI / 180;
+            var radianUnit = (float) Math.PI / 720;
+            var maxAngle = (float) Math.PI / 36;
             float xAngle = _xAngle;
             var yAngle = _yAngle;
 
             if (input.Left && !input.Right)
             {
                 xAngle = xAngle - radianUnit;
-                if (xAngle < -Math.PI / 2) xAngle = (float) -Math.PI / 2;
+                if (xAngle < -maxAngle) xAngle = -maxAngle;
             }
             else if (!input.Left && input.Right)
             {
                 xAngle = xAngle + radianUnit;
-                if (xAngle > Math.PI / 2) xAngle = (float) Math.PI / 2;
+                if (xAngle > maxAngle) xAngle = maxAngle;
             }
             else
             {
-                if (xAngle > Math.PI / 180) xAngle -= radianUnit;
-                else if (xAngle < -Math.PI / 180) xAngle += radianUnit;
+                if (xAngle > radianUnit) xAngle -= radianUnit;
+                else if (xAngle < -radianUnit) xAngle += radianUnit;
                 else xAngle = 0;
             }
 
             if (input.Up && !input.Down)
             {
                 yAngle = yAngle - radianUnit;
-                if (yAngle < -Math.PI / 2) yAngle = (float) -Math.PI / 2;
+                if (yAngle < -maxAngle) yAngle = -maxAngle;
             }
             else if (!input.Up && input.Down)
             {
                 yAngle = yAngle + radianUnit;
-                if (yAngle > Math.PI / 2) yAngle = (float) Math.PI / 2;
+                if (yAngle > maxAngle) yAngle = maxAngle;
             }
             else
             {
-                if (yAngle > Math.PI / 180) yAngle -= radianUnit;
-                else if (yAngle < -Math.PI / 180) yAngle += radianUnit;
+                if (yAngle > radianUnit) yAngle -= radianUnit;
+                else if (yAngle < -radianUnit) yAngle += radianUnit;
                 else yAngle = 0;
             }
 

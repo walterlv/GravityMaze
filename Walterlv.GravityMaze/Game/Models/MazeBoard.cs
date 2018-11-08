@@ -53,7 +53,7 @@ namespace Walterlv.GravityMaze.Game
             {
                 for (var j = 0; j < ColumnCount; j++)
                 {
-                    var (left, top) = GetWallInfo(j, i);
+                    var (left, up) = GetWallInfo(j, i);
 
                     var x = (float) (Area.Left + CellWidth * j);
                     var y = (float) (Area.Top + CellHeight * i);
@@ -63,7 +63,7 @@ namespace Walterlv.GravityMaze.Game
                         ds.FillRectangle(x - 1, y - 1, 2, CellHeight + 2, Colors.Black);
                     }
 
-                    if (top)
+                    if (up)
                     {
                         ds.FillRectangle(x - 1, y - 1, CellWidth + 2, 2, Colors.Black);
                     }
@@ -71,14 +71,14 @@ namespace Walterlv.GravityMaze.Game
             }
         }
 
-        private (bool left, bool top) GetWallInfo(int column, int row)
+        public (bool left, bool up) GetWallInfo(int column, int row)
         {
             var data = _mazeData[row];
             var leftFlag = 1 << (ColumnCount - column) * 2 + 1;
-            var topFlag = 1 << (ColumnCount - column) * 2;
+            var upFlag = 1 << (ColumnCount - column) * 2;
             var left = data & leftFlag;
-            var top = data & topFlag;
-            return (left != 0, top != 0);
+            var up = data & upFlag;
+            return (left != 0, up != 0);
         }
     }
 }
