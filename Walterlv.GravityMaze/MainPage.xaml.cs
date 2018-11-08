@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -25,7 +26,11 @@ namespace Walterlv.GravityMaze
         {
             InitializeComponent();
 
-            _context = new GameContext();
+            _input = new GameInput();
+            _context = new GameContext
+            {
+                Input = _input,
+            };
             _game = new MazeGame
             {
                 Context = _context,
@@ -39,8 +44,51 @@ namespace Walterlv.GravityMaze
             _context.SurfaceBounds = new Rect(0, 0, ActualWidth, ActualHeight);
         }
 
+        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            switch (e.Key)
+            {
+                case VirtualKey.Left:
+                    _input.Left = true;
+                    break;
+                case VirtualKey.Up:
+                    _input.Up = true;
+                    break;
+                case VirtualKey.Right:
+                    _input.Right = true;
+                    break;
+                case VirtualKey.Down:
+                    _input.Down = true;
+                    break;
+            }
+        }
+
+        protected override void OnKeyUp(KeyRoutedEventArgs e)
+        {
+            base.OnKeyUp(e);
+
+            switch (e.Key)
+            {
+                case VirtualKey.Left:
+                    _input.Left = false;
+                    break;
+                case VirtualKey.Up:
+                    _input.Up = false;
+                    break;
+                case VirtualKey.Right:
+                    _input.Right = false;
+                    break;
+                case VirtualKey.Down:
+                    _input.Down = false;
+                    break;
+            }
+        }
+
         private MazeGame _game;
         private GameContext _context;
+        private GameInput _input;
 
         private void OnCreateResources(CanvasAnimatedControl sender, CanvasCreateResourcesEventArgs e)
         {

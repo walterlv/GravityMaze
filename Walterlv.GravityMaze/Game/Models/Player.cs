@@ -1,6 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas;
 using System;
 using Windows.UI;
+using Microsoft.Graphics.Canvas.UI;
 using Walterlv.GravityMaze.Game.Framework;
 
 namespace Walterlv.GravityMaze.Game.Models
@@ -12,6 +13,11 @@ namespace Walterlv.GravityMaze.Game.Models
         public Player(MazeBoard board)
         {
             _board = board;
+        }
+
+        protected override void OnUpdate(CanvasTimingInformation timing)
+        {
+            
         }
 
         protected override void OnDraw(CanvasDrawingSession ds)
