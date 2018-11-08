@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -37,6 +38,8 @@ namespace Walterlv.GravityMaze
             };
 
             SizeChanged += OnSizeChanged;
+            Window.Current.CoreWindow.KeyDown += OnKeyDown;
+            Window.Current.CoreWindow.KeyUp += OnKeyUp;
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -44,11 +47,9 @@ namespace Walterlv.GravityMaze
             _context.SurfaceBounds = new Rect(0, 0, ActualWidth, ActualHeight);
         }
 
-        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        private void OnKeyDown(CoreWindow sender, KeyEventArgs e)
         {
-            base.OnKeyDown(e);
-
-            switch (e.Key)
+            switch (e.VirtualKey)
             {
                 case VirtualKey.Left:
                     _input.Left = true;
@@ -65,11 +66,9 @@ namespace Walterlv.GravityMaze
             }
         }
 
-        protected override void OnKeyUp(KeyRoutedEventArgs e)
+        private void OnKeyUp(CoreWindow sender, KeyEventArgs e)
         {
-            base.OnKeyUp(e);
-
-            switch (e.Key)
+            switch (e.VirtualKey)
             {
                 case VirtualKey.Left:
                     _input.Left = false;
