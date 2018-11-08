@@ -3,12 +3,14 @@ using System;
 using Windows.UI;
 using Microsoft.Graphics.Canvas.UI;
 using Walterlv.GravityMaze.Game.Framework;
+using Windows.Devices.Sensors;
 
 namespace Walterlv.GravityMaze.Game.Models
 {
     public class Player : GameObject
     {
         private readonly MazeBoard _board;
+        private readonly Accelerometer _accelerometer;
         private float _xAngle;
         private float _yAngle;
         private float _xSpeed;
@@ -16,10 +18,21 @@ namespace Walterlv.GravityMaze.Game.Models
         private float _xPosition;
         private float _yPosition;
         private float _radius;
+        private float _xAxis;
+        private float _yAxis;
+        private float _zAxis;
 
         public Player(MazeBoard board)
         {
             _board = board;
+            _accelerometer = Accelerometer.GetDefault();
+            if (_accelerometer != null)
+            {
+                uint minReportInterval = _accelerometer.MinimumReportInterval;
+                uint reportInterval = minReportInterval > 16 ? minReportInterval : 16;
+                _accelerometer.ReportInterval = reportInterval;
+                _accelerometer.ReadingChanged += Accelerometer_ReadingChanged;
+            }
         }
 
         protected override void OnUpdate(CanvasTimingInformation timing)
@@ -165,9 +178,24 @@ namespace Walterlv.GravityMaze.Game.Models
                 down, (float) (_board.Area.Top + _board.CellHeight * (row + 1)));
         }
 
+        private void Accelerometer_ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs e)
+        {
+            AccelerometerReading reading = e.Reading;
+            _xAxis = (float) reading.AccelerationX;
+            _yAxis = (float) reading.AccelerationY;
+            _zAxis = (float) reading.AccelerationZ;
+        }
+
         private (float xAngle, float yAngle) GetTiltAngles()
         {
-            return GetTiltAnglesByKeyboard();
+            if (_accelerometer != null)
+            {
+                return GetTiltAnglesByKeyboard();
+            }
+            else
+            {
+                return GetTiltAnglesByKeyboard();
+            }
         }
 
         private (float xAngle, float yAngle) GetTiltAnglesByKeyboard()
