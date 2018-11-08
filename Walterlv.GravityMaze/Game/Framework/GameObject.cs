@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.UI;
 
 namespace Walterlv.GravityMaze.Game.Framework
 {
@@ -40,6 +41,15 @@ namespace Walterlv.GravityMaze.Game.Framework
             }
         }
 
+        public void Update(CanvasTimingInformation timing)
+        {
+            OnUpdate(timing);
+            foreach (var child in Children)
+            {
+                child.Update(timing);
+            }
+        }
+
         public void Draw(CanvasDrawingSession ds)
         {
             OnDraw(ds);
@@ -47,6 +57,10 @@ namespace Walterlv.GravityMaze.Game.Framework
             {
                 child.Draw(ds);
             }
+        }
+
+        protected virtual void OnUpdate(CanvasTimingInformation timing)
+        {
         }
 
         protected virtual void OnDraw(CanvasDrawingSession ds)

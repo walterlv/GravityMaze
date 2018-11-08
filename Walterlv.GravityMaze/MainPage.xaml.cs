@@ -30,6 +30,13 @@ namespace Walterlv.GravityMaze
             {
                 Context = _context,
             };
+
+            SizeChanged += OnSizeChanged;
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            _context.SurfaceBounds = new Rect(0, 0, ActualWidth, ActualHeight);
         }
 
         private MazeGame _game;
@@ -41,7 +48,7 @@ namespace Walterlv.GravityMaze
 
         private void OnUpdate(ICanvasAnimatedControl sender, CanvasAnimatedUpdateEventArgs e)
         {
-            _context.SurfaceBounds = new Rect(0, 0, ActualWidth, ActualHeight);
+            _game.Update(e.Timing);
         }
 
         private void OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs e)
