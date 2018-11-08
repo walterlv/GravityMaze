@@ -40,14 +40,13 @@ namespace Walterlv.GravityMaze.Game
 
         protected override void OnUpdate(CanvasTimingInformation timing)
         {
+            Area = Context.SurfaceBounds;
+            CellWidth = (float) Area.Width / ColumnCount;
+            CellHeight = (float) Area.Height / RowCount;
         }
 
         protected override void OnDraw(CanvasDrawingSession ds)
         {
-            Area = Context.SurfaceBounds;
-            CellWidth = (float) Area.Width / ColumnCount;
-            CellHeight = (float) Area.Height / RowCount;
-
             ds.FillRectangle(Area, Colors.White);
 
             for (var i = 0; i < RowCount; i++)

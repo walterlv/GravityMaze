@@ -27,12 +27,14 @@ namespace Walterlv.GravityMaze.Game.Models
             var seconds = timing.ElapsedTime.TotalSeconds;
 
             var radianUnit = (float) Math.PI / 180;
-            var baseAcceleration = 100000;
+            var baseAcceleration = 10000;
 
             var xAcceleration = Math.Sin(_xAngle) * baseAcceleration;
             var yAcceleration = Math.Sin(_yAngle) * baseAcceleration;
             var xOffset = (float) (_xSpeed * seconds + xAcceleration * seconds * seconds / 2);
             var yOffset = (float) (_ySpeed * seconds + yAcceleration * seconds * seconds / 2);
+            _xSpeed += (float) (xAcceleration * seconds);
+            _ySpeed += (float) (yAcceleration * seconds);
 
             if (_xPosition == 0 && _yPosition == 0)
             {
