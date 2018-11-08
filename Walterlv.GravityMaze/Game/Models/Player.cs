@@ -28,7 +28,8 @@ namespace Walterlv.GravityMaze.Game.Models
 
             var baseAcceleration = 10f;
             baseAcceleration = baseAcceleration * Math.Min(_board.CellWidth, _board.CellHeight) * 20;
-            var resistanceAcceleration = 4f;
+            var resistanceAcceleration = 0.1f;
+            resistanceAcceleration = resistanceAcceleration * Math.Min(_board.CellWidth, _board.CellHeight) * 20;
             _radius = (float) (Math.Min(_board.CellWidth, _board.CellHeight) * 0.4);
             var tooSlowSpeed = Math.Min(_board.CellWidth, _board.CellHeight) / 2;
 
@@ -36,14 +37,14 @@ namespace Walterlv.GravityMaze.Game.Models
             (_xAngle, _yAngle) = GetTiltAngles();
 
             // 倾斜角度带来的加速度。
-            var xAcceleration = Math.Sin(_xAngle) * baseAcceleration;
-            var yAcceleration = Math.Sin(_yAngle) * baseAcceleration;
+            var xAcceleration = (float) Math.Sin(_xAngle) * baseAcceleration;
+            var yAcceleration = (float) Math.Sin(_yAngle) * baseAcceleration;
 
             // 叠加阻力带来的与速度反向的加速度。
-            if (_xSpeed > 0) xAcceleration -= resistanceAcceleration;
-            else if (_xSpeed < 0) xAcceleration += resistanceAcceleration;
-            if (_ySpeed > 0) yAcceleration -= resistanceAcceleration;
-            else if (_ySpeed < 0) yAcceleration += resistanceAcceleration;
+            (_xSpeed, xAcceleration) =
+                SuperpositionAcceleration(_xSpeed, xAcceleration, resistanceAcceleration, seconds);
+            (_ySpeed, yAcceleration) =
+                SuperpositionAcceleration(_ySpeed, yAcceleration, resistanceAcceleration, seconds);
 
             // 计算此加速度和此初速度下的位置偏移量。
             var xOffset = (float) (_xSpeed * seconds + xAcceleration * seconds * seconds / 2);
@@ -85,8 +86,46 @@ namespace Walterlv.GravityMaze.Game.Models
             // 计算下一帧的速度。
             _xSpeed += (float) (xAcceleration * seconds);
             _ySpeed += (float) (yAcceleration * seconds);
-            if (xAcceleration == 0 && _xSpeed < tooSlowSpeed && _xSpeed > -tooSlowSpeed) _xSpeed = 0;
-            if (yAcceleration == 0 && _ySpeed < tooSlowSpeed && _ySpeed > -tooSlowSpeed) _ySpeed = 0;
+        }
+
+        /// <summary>
+        /// 根据当前速度、加速度和经过的时间，计算叠加了阻力后的加速度和速度。
+        /// </summary>
+        private static (float speed, float acceleration) SuperpositionAcceleration(
+            float speed, float acceleration, float resistanceAcceleration, double seconds)
+        {
+            if (speed > 0)
+            {
+                var newAcceleration = acceleration - resistanceAcceleration;
+                var newSpeed = speed + newAcceleration * seconds;
+
+                if (newSpeed < 0 && acceleration == 0)
+                {
+                    speed = 0;
+                }
+
+                if (newSpeed > 0)
+                {
+                    acceleration = newAcceleration;
+                }
+            }
+            else if (speed < 0)
+            {
+                var xa = acceleration + resistanceAcceleration;
+                var newSpeed = speed + xa * seconds;
+
+                if (newSpeed > 0 && acceleration == 0)
+                {
+                    speed = 0;
+                }
+
+                if (newSpeed < 0)
+                {
+                    acceleration = xa;
+                }
+            }
+
+            return (speed, acceleration);
         }
 
         protected override void OnDraw(CanvasDrawingSession ds)
