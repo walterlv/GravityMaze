@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Navigation;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Walterlv.GravityMaze.Game;
+using Walterlv.GravityMaze.Game.Framework;
 
 namespace Walterlv.GravityMaze
 {
@@ -23,10 +24,16 @@ namespace Walterlv.GravityMaze
         public MainPage()
         {
             InitializeComponent();
-            _game = new MazeGame();
+
+            _context = new GameContext();
+            _game = new MazeGame
+            {
+                Context = _context,
+            };
         }
 
         private MazeGame _game;
+        private GameContext _context;
 
         private void OnCreateResources(CanvasAnimatedControl sender, CanvasCreateResourcesEventArgs e)
         {
@@ -34,6 +41,7 @@ namespace Walterlv.GravityMaze
 
         private void OnUpdate(ICanvasAnimatedControl sender, CanvasAnimatedUpdateEventArgs e)
         {
+            _context.SurfaceBounds = new Rect(0, 0, ActualWidth, ActualHeight);
         }
 
         private void OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs e)

@@ -7,7 +7,7 @@ namespace Walterlv.GravityMaze.Game
 {
     public class MazeBoard : GameObject
     {
-        public Rect DrawingArea { get; set; }
+        private Rect _area;
 
         public MazeBoard(
             int startRowIndex, int startColumnIndex,
@@ -23,7 +23,7 @@ namespace Walterlv.GravityMaze.Game
 
         protected override void OnDraw(CanvasDrawingSession ds)
         {
-            ds.DrawRectangle(new Rect(0,0,200,200), Colors.DarkCyan);
+            ds.FillRectangle(new Rect(0, 0, 200, 200), Colors.RoyalBlue);
         }
     }
 }

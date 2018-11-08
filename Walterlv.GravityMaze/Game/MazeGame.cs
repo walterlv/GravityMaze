@@ -11,10 +11,13 @@ namespace Walterlv.GravityMaze.Game
         private MazeBoard Board { get; } = PredefinedOptions.Boards.First().Value;
         private Player Player { get; } = new Player();
 
+        public MazeGame()
+        {
+            AddChildren(Board, Player);
+        }
+
         protected override void OnDraw(CanvasDrawingSession ds)
         {
-            Board.Draw(ds);
-            Player.Draw(ds);
         }
     }
 }

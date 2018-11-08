@@ -98,6 +98,8 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Game\Actions\PredefinedOptions.cs" />
+    <Compile Include="Game\Framework\GameContext.cs" />
+    <Compile Include="Game\Framework\IGameContext.cs" />
     <Compile Include="Game\Framework\IGameObject.cs" />
     <Compile Include="Game\Framework\GameObject.cs" />
     <Compile Include="Game\Models\MazeBoard.cs" />
