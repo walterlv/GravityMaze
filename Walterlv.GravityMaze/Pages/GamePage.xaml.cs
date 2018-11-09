@@ -57,6 +57,9 @@ namespace Walterlv.GravityMaze.Pages
                 case VirtualKey.Down:
                     _input.Down = true;
                     break;
+                case VirtualKey.Escape:
+                    UIPanel.Visibility = Visibility.Visible;
+                    break;
             }
         }
 
@@ -90,6 +93,7 @@ namespace Walterlv.GravityMaze.Pages
 
                 var boardMaterial = await CanvasBitmap.LoadAsync(GameCanvas, actualUri);
                 _game.Board.Material = boardMaterial;
+                UIPanel.Visibility = Visibility.Collapsed;
             }
         }
 
