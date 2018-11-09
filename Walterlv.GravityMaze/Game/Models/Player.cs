@@ -70,7 +70,7 @@ namespace Walterlv.GravityMaze.Game.Models
             var seconds = timing.ElapsedTime.TotalSeconds;
 
             var pixelsPerMetre = Context.PixelsPerMetre;
-            var cellSize = Math.Min(_board.CellWidth, _board.CellHeight);
+            var cellSize = Min(_board.CellWidth, _board.CellHeight);
             var baseAcceleration = GravityAcceleration * pixelsPerMetre;
             var resistanceAcceleration = ResistanceAcceleration * pixelsPerMetre;
             _radius = cellSize * SizeRatio / 2;
@@ -79,14 +79,15 @@ namespace Walterlv.GravityMaze.Game.Models
             (_xAngle, _yAngle) = GetTiltAngles();
 
             // 倾斜角度带来的加速度。
-            var xAcceleration = (float) Math.Sin(_xAngle) * baseAcceleration;
-            var yAcceleration = (float) Math.Sin(_yAngle) * baseAcceleration;
+            var xAcceleration = (float) Sin(_xAngle) * baseAcceleration;
+            var yAcceleration = (float) Sin(_yAngle) * baseAcceleration;
 
             // 叠加阻力带来的与速度反向的加速度。
-            (_xSpeed, xAcceleration) =
-                SuperpositionAcceleration(_xSpeed, xAcceleration, resistanceAcceleration, seconds);
-            (_ySpeed, yAcceleration) =
-                SuperpositionAcceleration(_ySpeed, yAcceleration, resistanceAcceleration, seconds);
+            var speedTheta = CalculateTheta(0f, 0f, _xSpeed, _ySpeed);
+            (_xSpeed, xAcceleration) = SuperpositionAcceleration(
+                _xSpeed, xAcceleration, (float) Abs(resistanceAcceleration * Cos(speedTheta)), seconds);
+            (_ySpeed, yAcceleration) = SuperpositionAcceleration(
+                _ySpeed, yAcceleration, (float) Abs(resistanceAcceleration * Sin(speedTheta)), seconds);
 
             // 计算此加速度和此初速度下的位置偏移量。
             var xOffset = (float) (_xSpeed * seconds + xAcceleration * seconds * seconds / 2);
@@ -285,8 +286,8 @@ namespace Walterlv.GravityMaze.Game.Models
         private (float xAngle, float yAngle) GetTiltAnglesByKeyboard()
         {
             var input = Context.Input;
-            var radianUnit = (float) Math.PI / 720;
-            var maxAngle = (float) Math.PI / 36;
+            var radianUnit = (float) PI / 720;
+            var maxAngle = (float) PI / 36;
             float xAngle = _xAngle;
             var yAngle = _yAngle;
 
@@ -332,9 +333,9 @@ namespace Walterlv.GravityMaze.Game.Models
             return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
         }
 
-        private double CalculateTheta(float x1, float y1, float x2, float y2)
+        private float CalculateTheta(float x1, float y1, float x2, float y2)
         {
-            return Tanh((y2 - y1) / (x2 - x1));
+            return (float) Tanh((y2 - y1) / (x2 - x1));
         }
     }
 }
