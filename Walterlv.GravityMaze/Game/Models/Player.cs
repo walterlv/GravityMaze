@@ -158,8 +158,8 @@ namespace Walterlv.GravityMaze.Game.Models
                     // 如果已经插入到墙壁中，则调整位置。
                     xOffset = 0;
                     yOffset = 0;
-                    _xSpeed = (newXSpeedFromXPart + newXSpeedFromYPart) * collisionLoss;
-                    _ySpeed = (newYSpeedFromXPart + newYSpeedFromYPart) * collisionLoss;
+                    _xSpeed = newXSpeedFromXPart + newXSpeedFromYPart;
+                    _ySpeed = newYSpeedFromXPart + newYSpeedFromYPart;
                 }
             }
 
