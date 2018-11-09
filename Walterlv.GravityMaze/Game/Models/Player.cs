@@ -23,11 +23,25 @@ namespace Walterlv.GravityMaze.Game.Models
         private float _yAxis;
         private float _zAxis;
 
+        /// <summary>
+        /// 重力加速度，单位 m/s²。
+        /// </summary>
         public float GravityAcceleration { get; } = 10f;
+
+        /// <summary>
+        /// 阻力加速度，单位 m/s²。
+        /// </summary>
         public float ResistanceAcceleration { get; } = 0.05f;
+
+        /// <summary>
+        /// 碰撞损失，单位百分比；表示每次碰撞后剩余冲量的百分比。
+        /// </summary>
         public float CollisionLoss { get; } = 0.4f;
-        public float RadiusRatio { get; } = 0.4f;
-        public float PixelsPerMetre { get; } = 4000f;
+
+        /// <summary>
+        /// 玩家尺寸占一个格子中的尺寸百分比。
+        /// </summary>
+        public float SizeRatio { get; } = 0.8f;
 
         public Player(MazeBoard board)
         {
@@ -46,10 +60,11 @@ namespace Walterlv.GravityMaze.Game.Models
         {
             var seconds = timing.ElapsedTime.TotalSeconds;
 
+            var pixelsPerMetre = Context.PixelsPerMetre;
             var cellSize = Math.Min(_board.CellWidth, _board.CellHeight);
-            var baseAcceleration = GravityAcceleration * PixelsPerMetre;
-            var resistanceAcceleration = ResistanceAcceleration * PixelsPerMetre;
-            _radius = cellSize * RadiusRatio;
+            var baseAcceleration = GravityAcceleration * pixelsPerMetre;
+            var resistanceAcceleration = ResistanceAcceleration * pixelsPerMetre;
+            _radius = cellSize * SizeRatio / 2;
 
             // 计算这一帧的倾斜角度。
             (_xAngle, _yAngle) = GetTiltAngles();

@@ -6,5 +6,6 @@ namespace Walterlv.GravityMaze.Game.Framework
     {
         public Rect SurfaceBounds { get; set; }
         public IGameInput Input { get; set; }
+        public float PixelsPerMetre { get; } = 4000f;
     }
 }
