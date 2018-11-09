@@ -93,18 +93,6 @@ namespace Walterlv.GravityMaze.Game.Models
             var xOffset = (float) (_xSpeed * seconds + xAcceleration * seconds * seconds / 2);
             var yOffset = (float) (_ySpeed * seconds + yAcceleration * seconds * seconds / 2);
 
-            // 叠加上一帧的位置以获得这一帧的位置。
-            if (_xPosition == 0 && _yPosition == 0)
-            {
-                _xPosition = (float)
-                    (_board.Area.Left + _board.CellWidth * _board.StartColumnIndex + _board.CellWidth / 2);
-                _yPosition = (float)
-                    (_board.Area.Top + _board.CellHeight * _board.StartRowIndex + _board.CellHeight / 2);
-            }
-
-            _xPosition += xOffset;
-            _yPosition += yOffset;
-
             // 进行边缘碰撞检测。
             // +--------+
             // |   x    |
@@ -116,22 +104,26 @@ namespace Walterlv.GravityMaze.Game.Models
             if (left && _xSpeed < 0 && _xPosition - _radius < leftPosition)
             {
                 _xSpeed = -_xSpeed * CollisionLoss;
+                xOffset = 0;
                 _xPosition = leftPosition + _radius;
             }
             else if (right && _xSpeed > 0 && _xPosition + _radius > rightPosition)
             {
                 _xSpeed = -_xSpeed * CollisionLoss;
+                xOffset = 0;
                 _xPosition = rightPosition - _radius;
             }
 
             if (up && _ySpeed < 0 && _yPosition - _radius < upPosition)
             {
                 _ySpeed = -_ySpeed * CollisionLoss;
+                yOffset = 0;
                 _yPosition = upPosition + _radius;
             }
             else if (down && _ySpeed > 0 && _yPosition + _radius > downPosition)
             {
                 _ySpeed = -_ySpeed * CollisionLoss;
+                yOffset = 0;
                 _yPosition = downPosition - _radius;
             }
 
@@ -143,8 +135,7 @@ namespace Walterlv.GravityMaze.Game.Models
             var (hasCorner, xCornerPosition, yCornerPosition) = GetCellCornerInfoByPosition(_xPosition, _yPosition);
             if (hasCorner && (_xSpeed != 0 || _ySpeed != 0))
             {
-                var distanceSquare =
-                    CalculateDistanceSquare(xCornerPosition, yCornerPosition, _xPosition, _yPosition);
+                var distanceSquare = CalculateDistanceSqure(xCornerPosition, yCornerPosition, _xPosition, _yPosition);
                 if (distanceSquare < _radius * _radius)
                 {
                     var theta = CalculateTheta(xCornerPosition, yCornerPosition, _xPosition, _yPosition);
@@ -158,8 +149,27 @@ namespace Walterlv.GravityMaze.Game.Models
                         (float) (-_ySpeed * Cos(theta) * Cos(theta) + _ySpeed * Sin(theta) * Sin(theta));
                     _xSpeed = newXSpeedFromXPart;
                     _ySpeed = newYSpeedFromXPart;
+                    // 如果已经插入到墙壁中，则调整位置。
+                    xOffset = 0;
+                    yOffset = 0;
+                    var xDirection = _xSpeed > 0 ^ xCornerPosition > _xPosition;
+                    var yDirection = _ySpeed > 0 ^ yCornerPosition > _yPosition;
+                    _xPosition = xCornerPosition + (float) (_radius * Sin(theta));
+                    _yPosition = yCornerPosition + (float) (_radius * Cos(theta));
                 }
             }
+
+            // 叠加上一帧的位置以获得这一帧的位置。
+            if (_xPosition == 0 && _yPosition == 0)
+            {
+                _xPosition = (float)
+                    (_board.Area.Left + _board.CellWidth * _board.StartColumnIndex + _board.CellWidth / 2);
+                _yPosition = (float)
+                    (_board.Area.Top + _board.CellHeight * _board.StartRowIndex + _board.CellHeight / 2);
+            }
+
+            _xPosition += xOffset;
+            _yPosition += yOffset;
 
             // 计算下一帧的速度。
             _xSpeed += (float) (xAcceleration * seconds);
@@ -316,7 +326,7 @@ namespace Walterlv.GravityMaze.Game.Models
             return (xAngle, yAngle);
         }
 
-        private double CalculateDistanceSquare(float x1, float y1, float x2, float y2)
+        private double CalculateDistanceSqure(float x1, float y1, float x2, float y2)
         {
             return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
         }
