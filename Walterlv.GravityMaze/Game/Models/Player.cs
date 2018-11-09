@@ -144,7 +144,7 @@ namespace Walterlv.GravityMaze.Game.Models
                     upCornerPosition, middleCornerPosition, downCornerPosition)
                 = GetCellCornerInfoByPosition(_xPosition, _yPosition);
             var collided = false;
-            if (hasLeft && _xSpeed < 0)
+            if ((hasLeft && _xSpeed < 0) || (hasRight && _xSpeed > 0))
             {
                 var distanceSquare =
                     CalculateDistanceSquare(centerCornerPosition, middleCornerPosition, _xPosition, _yPosition);
@@ -160,14 +160,8 @@ namespace Walterlv.GravityMaze.Game.Models
                     _ySpeed = newYSpeedFromXPart;
                 }
             }
-            else if (hasRight && _xSpeed > 0)
-            {
-            }
 
-            if (hasUp && _ySpeed < 0)
-            {
-            }
-            else if (hasDown && _ySpeed > 0)
+            if ((hasUp && _ySpeed < 0) || (hasDown && _ySpeed > 0))
             {
                 var distanceSquare =
                     CalculateDistanceSquare(centerCornerPosition, middleCornerPosition, _xPosition, _yPosition);
@@ -188,6 +182,7 @@ namespace Walterlv.GravityMaze.Game.Models
                         _xSpeed = newXSpeedFromYPart;
                         _ySpeed = newYSpeedFromYPart;
                     }
+
                     collided = true;
                 }
             }
