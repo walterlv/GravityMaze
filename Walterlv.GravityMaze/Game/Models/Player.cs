@@ -145,10 +145,14 @@ namespace Walterlv.GravityMaze.Game.Models
             //     |
             var (newXSpeedFromXPart, newYSpeedFromXPart, newXSpeedFromYPart, newYSpeedFromYPart) = (0f, 0f, 0f, 0f);
             var (hasCorner, xCornerPosition, yCornerPosition) = GetCellCornerInfoByPosition(_xPosition, _yPosition);
-            if (hasCorner && (_xSpeed != 0 || _ySpeed != 0))
+            var xTo = xCornerPosition - _xPosition > 0 && _xSpeed >= 0
+                      || xCornerPosition - _xPosition < 0 && _xSpeed <= 0;
+            var yTo = yCornerPosition - _yPosition > 0 && _ySpeed >= 0
+                      || yCornerPosition - _yPosition < 0 && _ySpeed <= 0;
+            if (hasCorner && (_xSpeed != 0 || _ySpeed != 0) && (xTo || yTo))
             {
-                var distanceSquare = CalculateDistanceSqure(xCornerPosition, yCornerPosition, _xPosition, _yPosition);
-                if (distanceSquare < _radius * _radius)
+                var distance = CalculateDistance(xCornerPosition, yCornerPosition, _xPosition, _yPosition);
+                if (distance < _radius)
                 {
                     var theta = CalculateTheta(xCornerPosition, yCornerPosition, _xPosition, _yPosition);
                     var angle = theta * 180 / PI;
@@ -160,15 +164,53 @@ namespace Walterlv.GravityMaze.Game.Models
                         (float) (-_ySpeed * Cos(theta) * Sin(theta) - _ySpeed * Sin(theta) * Cos(theta));
                     newYSpeedFromYPart =
                         (float) (-_ySpeed * Cos(theta) * Cos(theta) + _ySpeed * Sin(theta) * Sin(theta));
-                    _xSpeed = newXSpeedFromXPart + newXSpeedFromYPart;
-                    _ySpeed = newYSpeedFromXPart + newYSpeedFromYPart;
                     // 如果已经插入到墙壁中，则调整位置。
                     xOffset = 0;
                     yOffset = 0;
-                    var xDirection = _xSpeed > 0 ^ xCornerPosition > _xPosition;
-                    var yDirection = _ySpeed > 0 ^ yCornerPosition > _yPosition;
-                    //_xPosition = xCornerPosition + (float) (_radius * Sin(theta));
-                    //_yPosition = yCornerPosition + (float) (_radius * Cos(theta));
+                    var theta1 = theta;
+                    var theta3 = _xSpeed == 0 ? PI / 2 : Tanh(_ySpeed / _xSpeed);
+                    var theta2 = PI / 2 - theta1 - theta3;
+                    var alpha = Sinh(distance * Sin(theta2) / _radius);
+                    var nearlyOffset = distance * Cos(theta2) - _radius * Cos(alpha);
+                    //_xPosition += (float)(nearlyOffset * Cos(theta3));
+                    //_yPosition += (float)(nearlyOffset * Sin(theta3));
+                    //if (_xSpeed > 0 && _ySpeed > 0)
+                    //{
+                    //    _xPosition += (float) (nearlyOffset * Cos(theta3));
+                    //    _yPosition += (float) (nearlyOffset * Sin(theta3));
+                    //}
+                    //else if (_xSpeed > 0 && _ySpeed < 0)
+                    //{
+                    //    _xPosition += (float) (nearlyOffset * Cos(theta3));
+                    //    _yPosition += (float) (nearlyOffset * Sin(theta3));
+                    //}
+                    //else if (_xSpeed < 0 && _ySpeed > 0)
+                    //{
+                    //    _xPosition += (float) (nearlyOffset * Cos(theta3));
+                    //    _yPosition += (float) (nearlyOffset * Sin(theta3));
+                    //}
+                    //else if (_xSpeed < 0 && _ySpeed < 0)
+                    //{
+                    //    _xPosition += (float) (nearlyOffset * Cos(theta3));
+                    //    _yPosition += (float) (nearlyOffset * Sin(theta3));
+                    //}
+                    //else if (_xSpeed > 0)
+                    //{
+                    //}
+                    //else if (_xSpeed < 0)
+                    //{
+                    //}
+                    //else if (_ySpeed > 0)
+                    //{
+                    //}
+                    //else if (_ySpeed < 0)
+                    //{
+                    //}
+
+                    //_xPosition = xCornerPosition - (float) (_radius * Cos(theta));
+                    //_yPosition = yCornerPosition - (float) (_radius * Sin(theta));
+                    _xSpeed = newXSpeedFromXPart + newXSpeedFromYPart;
+                    _ySpeed = newYSpeedFromXPart + newYSpeedFromYPart;
                 }
             }
 
@@ -327,9 +369,9 @@ namespace Walterlv.GravityMaze.Game.Models
             return (xAngle, yAngle);
         }
 
-        private double CalculateDistanceSqure(float x1, float y1, float x2, float y2)
+        private float CalculateDistance(float x1, float y1, float x2, float y2)
         {
-            return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+            return (float) Sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
         }
 
         private float CalculateTheta(float x1, float y1, float x2, float y2)
