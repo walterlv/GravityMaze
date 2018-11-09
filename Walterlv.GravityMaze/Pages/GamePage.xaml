@@ -9,7 +9,27 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <Grid x:Name="RootPanel">
         <xaml:CanvasAnimatedControl CreateResources="OnCreateResources" Update="OnUpdate" Draw="OnDraw" />
+        <Grid x:Name="UIPanel">
+            <ListView HorizontalAlignment="Left" SelectionChanged="OnThumbnailSelectionChanged">
+                <Image Width="256" Height="256"
+                       Source="/Assets/Game/Boards/towel.thumbnail.png" />
+                <Image Width="256" Height="256"
+                       Source="/Assets/Game/Boards/sofa-fabric.thumbnail.png" />
+                <Image Width="256" Height="256"
+                       Source="/Assets/Game/Boards/cardboard.thumbnail.png" />
+                <Image Width="256" Height="256"
+                       Source="/Assets/Game/Boards/soft-sofa-fabric.thumbnail.png" />
+                <Image Width="256" Height="256"
+                       Source="/Assets/Game/Boards/wood-table.thumbnail.png" />
+                <Image Width="256" Height="256"
+                       Source="/Assets/Game/Boards/mac-touchpad-aluminum.thumbnail.png" />
+                <Image Width="256" Height="256"
+                       Source="/Assets/Game/Boards/wood-table.thumbnail.png" />
+                <Image Width="256" Height="256"
+                       Source="/Assets/Game/Boards/hard-fabric.thumbnail.png" />
+            </ListView>
+        </Grid>
     </Grid>
 </Page>

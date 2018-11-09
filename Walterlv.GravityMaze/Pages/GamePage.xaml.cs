@@ -8,6 +8,7 @@ using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Walterlv.GravityMaze.Pages
 {
@@ -74,6 +75,17 @@ namespace Walterlv.GravityMaze.Pages
                 case VirtualKey.Down:
                     _input.Down = false;
                     break;
+            }
+        }
+
+        private void OnThumbnailSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var image = (Image) ((ListView) sender).SelectedItem;
+            if (image.Source is BitmapImage bi)
+            {
+                var uri = bi.UriSource;
+                var actualPath = uri.AbsolutePath.Replace(".thumbnail", "");
+                var actualUri = new Uri(actualPath);
             }
         }
 
