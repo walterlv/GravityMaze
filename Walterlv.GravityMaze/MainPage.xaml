@@ -12,5 +12,31 @@
 
     <Grid>
         <Frame SourcePageType="pages:GamePage" />
+        <Grid>
+            <ListView VerticalAlignment="Top"
+                      ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <Image Width="256" Height="256"
+                       Source="Assets/Game/Boards/towel.thumbnail.png" />
+                <Image Width="256" Height="256"
+                       Source="Assets/Game/Boards/sofa-fabric.thumbnail.png" />
+                <Image Width="256" Height="256"
+                       Source="Assets/Game/Boards/cardboard.thumbnail.png" />
+                <Image Width="256" Height="256"
+                       Source="Assets/Game/Boards/soft-sofa-fabric.thumbnail.png" />
+                <Image Width="256" Height="256"
+                       Source="Assets/Game/Boards/wood-table.thumbnail.png" />
+                <Image Width="256" Height="256"
+                       Source="Assets/Game/Boards/mac-touchpad-aluminum.thumbnail.png" />
+                <Image Width="256" Height="256"
+                       Source="Assets/Game/Boards/wood-table.thumbnail.png" />
+                <Image Width="256" Height="256"
+                       Source="Assets/Game/Boards/hard-fabric.thumbnail.png" />
+            </ListView>
+        </Grid>
     </Grid>
 </Page>
