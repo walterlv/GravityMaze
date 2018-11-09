@@ -9,20 +9,33 @@ namespace Walterlv.GravityMaze.Game
 {
     public class MazeGame : GameObject
     {
-        public CanvasBitmap Material { get; set; }
+        private (string name, CanvasBitmap bitmap) _material;
+
+        public (string name, CanvasBitmap bitmap) Material
+        {
+            get => _material;
+            set
+            {
+                _material = value;
+                var material = PredefinedOptions.Materials[value.name];
+                Board.Material = material;
+            }
+        }
+
+        private MazeBoard Board { get; }
 
         public MazeGame()
         {
-            var Board = PredefinedOptions.Boards.First().Value;
+            Board = PredefinedOptions.Boards.First().Value;
             Player player = new Player(Board);
             AddChildren(Board, player);
         }
 
         protected override void OnDraw(CanvasDrawingSession ds)
         {
-            if (Material != null)
+            if (Material.bitmap != null)
             {
-                ds.DrawImage(Material, Context.SurfaceBounds);
+                ds.DrawImage(Material.bitmap, Context.SurfaceBounds);
             }
             else
             {

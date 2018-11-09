@@ -30,16 +30,6 @@ namespace Walterlv.GravityMaze.Game.Models
         public float GravityAcceleration { get; } = 10f;
 
         /// <summary>
-        /// 阻力加速度，单位 m/s²。
-        /// </summary>
-        public float ResistanceAcceleration { get; } = 0.005f;
-
-        /// <summary>
-        /// 碰撞损失，单位百分比；表示每次碰撞后剩余冲量的百分比。
-        /// </summary>
-        public float CollisionLoss { get; } = 0.4f;
-
-        /// <summary>
         /// 玩家尺寸占一个格子中的尺寸百分比。
         /// </summary>
         public float SizeRatio { get; } = 0.8f;
@@ -72,7 +62,7 @@ namespace Walterlv.GravityMaze.Game.Models
             var pixelsPerMetre = Context.PixelsPerMetre;
             var cellSize = Min(_board.CellWidth, _board.CellHeight);
             var baseAcceleration = GravityAcceleration * pixelsPerMetre;
-            var resistanceAcceleration = ResistanceAcceleration * pixelsPerMetre;
+            var resistanceAcceleration = _board.Material.ResistanceAcceleration * pixelsPerMetre;
             _radius = cellSize * SizeRatio / 2;
 
             // 计算这一帧的倾斜角度。
@@ -113,28 +103,29 @@ namespace Walterlv.GravityMaze.Game.Models
             var (left, leftPosition, up, upPosition, right, rightPosition, down, downPosition) =
                 GetCellWallInfoByPosition(_xPosition, _yPosition);
 
+            var collisionLoss = _board.Material.CollisionLoss;
             if (left && _xSpeed < 0 && _xPosition - _radius < leftPosition)
             {
-                _xSpeed = -_xSpeed * CollisionLoss;
+                _xSpeed = -_xSpeed * collisionLoss;
                 xOffset = 0;
                 _xPosition = leftPosition + _radius;
             }
             else if (right && _xSpeed > 0 && _xPosition + _radius > rightPosition)
             {
-                _xSpeed = -_xSpeed * CollisionLoss;
+                _xSpeed = -_xSpeed * collisionLoss;
                 xOffset = 0;
                 _xPosition = rightPosition - _radius;
             }
 
             if (up && _ySpeed < 0 && _yPosition - _radius < upPosition)
             {
-                _ySpeed = -_ySpeed * CollisionLoss;
+                _ySpeed = -_ySpeed * collisionLoss;
                 yOffset = 0;
                 _yPosition = upPosition + _radius;
             }
             else if (down && _ySpeed > 0 && _yPosition + _radius > downPosition)
             {
-                _ySpeed = -_ySpeed * CollisionLoss;
+                _ySpeed = -_ySpeed * collisionLoss;
                 yOffset = 0;
                 _yPosition = downPosition - _radius;
             }
@@ -215,11 +206,6 @@ namespace Walterlv.GravityMaze.Game.Models
             }
 
             return (speed, acceleration);
-        }
-
-        protected override void OnDraw(CanvasDrawingSession ds)
-        {
-            ds.FillEllipse(_xPosition, _yPosition, _radius, _radius, Colors.Gray);
         }
 
         private (bool left, float leftPosition,
@@ -335,6 +321,11 @@ namespace Walterlv.GravityMaze.Game.Models
         private float CalculateTheta(float x1, float y1, float x2, float y2)
         {
             return (float) Tanh((x2 - x1) / (y2 - y1));
+        }
+
+        protected override void OnDraw(CanvasDrawingSession ds)
+        {
+            ds.FillEllipse(_xPosition, _yPosition, _radius, _radius, Colors.Gray);
         }
     }
 }

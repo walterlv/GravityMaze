@@ -4,6 +4,7 @@ using Windows.UI;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI;
 using Walterlv.GravityMaze.Game.Framework;
+using Walterlv.GravityMaze.Game.Models;
 
 namespace Walterlv.GravityMaze.Game
 {
@@ -20,6 +21,8 @@ namespace Walterlv.GravityMaze.Game
         public Rect Area { get; private set; }
         public float CellWidth { get; private set; }
         public float CellHeight { get; private set; }
+
+        public Material Material { get; set; } = Material.Default;
 
         public MazeBoard(
             int startColumnIndex, int startRowIndex,

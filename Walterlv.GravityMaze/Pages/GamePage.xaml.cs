@@ -2,6 +2,7 @@
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
+using System.IO;
 using Walterlv.GravityMaze.Game;
 using Walterlv.GravityMaze.Game.Framework;
 using Windows.Foundation;
@@ -87,10 +88,11 @@ namespace Walterlv.GravityMaze.Pages
             {
                 var uri = bi.UriSource;
                 var actual = uri.AbsoluteUri.Replace(".thumbnail.png", ".jpg");
+                var name = Path.GetFileNameWithoutExtension(actual);
                 var actualUri = new Uri(actual);
 
                 var boardMaterial = await CanvasBitmap.LoadAsync(GameCanvas, actualUri);
-                _game.Material = boardMaterial;
+                _game.Material = (name, boardMaterial);
                 UIPanel.Visibility = Visibility.Collapsed;
             }
         }
