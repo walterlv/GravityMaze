@@ -10,7 +10,8 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid x:Name="RootPanel">
-        <xaml:CanvasAnimatedControl CreateResources="OnCreateResources" Update="OnUpdate" Draw="OnDraw" />
+        <xaml:CanvasAnimatedControl x:Name="GameCanvas"
+                                    CreateResources="OnCreateResources" Update="OnUpdate" Draw="OnDraw" />
         <Grid x:Name="UIPanel">
             <ListView HorizontalAlignment="Left" SelectionChanged="OnThumbnailSelectionChanged">
                 <Image Width="256" Height="256"

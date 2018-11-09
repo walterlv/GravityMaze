@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas.UI;
+﻿using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using Walterlv.GravityMaze.Game;
@@ -78,14 +79,17 @@ namespace Walterlv.GravityMaze.Pages
             }
         }
 
-        private void OnThumbnailSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void OnThumbnailSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var image = (Image) ((ListView) sender).SelectedItem;
             if (image.Source is BitmapImage bi)
             {
                 var uri = bi.UriSource;
-                var actualPath = uri.AbsolutePath.Replace(".thumbnail", "");
-                var actualUri = new Uri(actualPath);
+                var actual = uri.AbsoluteUri.Replace(".thumbnail.png", ".jpg");
+                var actualUri = new Uri(actual);
+
+                var boardMaterial = await CanvasBitmap.LoadAsync(GameCanvas, actualUri);
+                _game.Board.Material = boardMaterial;
             }
         }
 

@@ -3,6 +3,7 @@ using Windows.UI;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI;
 using Walterlv.GravityMaze.Game.Framework;
+using System;
 
 namespace Walterlv.GravityMaze.Game
 {
@@ -19,6 +20,7 @@ namespace Walterlv.GravityMaze.Game
         public Rect Area { get; private set; }
         public float CellWidth { get; private set; }
         public float CellHeight { get; private set; }
+        public CanvasBitmap Material { get; set; }
 
         public MazeBoard(
             int startColumnIndex, int startRowIndex,
@@ -47,7 +49,14 @@ namespace Walterlv.GravityMaze.Game
 
         protected override void OnDraw(CanvasDrawingSession ds)
         {
-            ds.FillRectangle(Area, Colors.White);
+            if (Material != null)
+            {
+                ds.DrawImage(Material);
+            }
+            else
+            {
+                ds.FillRectangle(Area, Colors.White);
+            }
 
             for (var i = 0; i < RowCount; i++)
             {
