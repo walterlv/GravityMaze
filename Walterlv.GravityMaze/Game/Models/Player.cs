@@ -4,6 +4,7 @@ using Windows.UI;
 using Microsoft.Graphics.Canvas.UI;
 using Walterlv.GravityMaze.Game.Framework;
 using Windows.Devices.Sensors;
+using static System.Math;
 
 namespace Walterlv.GravityMaze.Game.Models
 {
@@ -137,7 +138,59 @@ namespace Walterlv.GravityMaze.Game.Models
             //     |
             // --- x ---
             //     |
-            // 未完待续。
+            var (newXSpeedFromXPart, newYSpeedFromXPart, newXSpeedFromYPart, newYSpeedFromYPart) = (0f, 0f, 0f, 0f);
+            var (hasLeft, hasUp, hasRight, hasDown,
+                    leftCornerPosition, centerCornerPosition, rightCornerPosition,
+                    upCornerPosition, middleCornerPosition, downCornerPosition)
+                = GetCellCornerInfoByPosition(_xPosition, _yPosition);
+            var collided = false;
+            if (hasLeft && _xSpeed < 0)
+            {
+                var distanceSquare =
+                    CalculateDistanceSquare(centerCornerPosition, middleCornerPosition, _xPosition, _yPosition);
+                if (distanceSquare < _radius * _radius)
+                {
+                    var theta = CalculateTheta(centerCornerPosition, middleCornerPosition, _xPosition, _yPosition);
+                    newXSpeedFromXPart =
+                        (float) (-_xSpeed * Sin(theta) * Sin(theta) + _xSpeed * Cos(theta) * Cos(theta));
+                    newYSpeedFromXPart =
+                        (float) (-_xSpeed * Sin(theta) * Cos(theta) - _xSpeed * Cos(theta) * Sin(theta));
+                    collided = true;
+                    _xSpeed = newXSpeedFromXPart;
+                    _ySpeed = newYSpeedFromXPart;
+                }
+            }
+            else if (hasRight && _xSpeed > 0)
+            {
+            }
+
+            if (hasUp && _ySpeed < 0)
+            {
+            }
+            else if (hasDown && _ySpeed > 0)
+            {
+                var distanceSquare =
+                    CalculateDistanceSquare(centerCornerPosition, middleCornerPosition, _xPosition, _yPosition);
+                if (distanceSquare < _radius * _radius)
+                {
+                    var theta = CalculateTheta(centerCornerPosition, middleCornerPosition, _xPosition, _yPosition);
+                    newXSpeedFromYPart =
+                        (float) (_ySpeed * Cos(theta) * Sin(theta) - _ySpeed * Sin(theta) * Cos(theta));
+                    newYSpeedFromYPart =
+                        (float) (-_ySpeed * Cos(theta) * Cos(theta) + _ySpeed * Sin(theta) * Sin(theta));
+                    if (collided)
+                    {
+                        _xSpeed += newXSpeedFromYPart;
+                        _ySpeed += newYSpeedFromYPart;
+                    }
+                    else
+                    {
+                        _xSpeed = newXSpeedFromYPart;
+                        _ySpeed = newYSpeedFromYPart;
+                    }
+                    collided = true;
+                }
+            }
 
             // 计算下一帧的速度。
             _xSpeed += (float) (xAcceleration * seconds);
@@ -206,6 +259,45 @@ namespace Walterlv.GravityMaze.Game.Models
                 down, (float) (_board.Area.Top + _board.CellHeight * (row + 1)));
         }
 
+        private (bool hasLeft, bool hasUp, bool hasRight, bool hasDown,
+            float leftPosition, float centerPosition, float RightPosition,
+            float upPosition, float middlePosition, float downPosition)
+            GetCellCornerInfoByPosition(float xPosition, float yPosition)
+        {
+            var columnIndex = (xPosition - _board.Area.Left) / _board.CellWidth;
+            var rowIndex = (yPosition - _board.Area.Top) / _board.CellHeight;
+
+            var left = columnIndex - SizeRatio / 2;
+            var up = rowIndex - SizeRatio / 2;
+            var right = columnIndex + SizeRatio / 2;
+            var down = rowIndex + SizeRatio / 2;
+
+            var leftPosition = (float) (_board.Area.Left + _board.CellWidth * (int) left);
+            var centerPosition = (float) (_board.Area.Left + _board.CellWidth * (int) right);
+            var RightPosition = (float) (_board.Area.Left + _board.CellWidth * ((int) right + 1));
+            var upPosition = (float) (_board.Area.Top + _board.CellHeight * (int) up);
+            var middlePosition = (float) (_board.Area.Top + _board.CellHeight * (int) down);
+            var downPosition = (float) (_board.Area.Top + _board.CellHeight * ((int) down + 1));
+
+            var (hasLeft, hasUp, hasRight, hasDown) = (false, false, false, false);
+
+            if ((int) left != (int) right)
+            {
+                hasUp = _board.GetWallInfo((int) right, (int) up).left;
+                hasDown = _board.GetWallInfo((int) right, (int) down).left;
+            }
+
+            if ((int) up != (int) down)
+            {
+                hasLeft = _board.GetWallInfo((int) left, (int) down).up;
+                hasRight = _board.GetWallInfo((int) right, (int) down).up;
+            }
+
+            return (hasLeft, hasUp, hasRight, hasDown,
+                leftPosition, centerPosition, RightPosition,
+                upPosition, middlePosition, downPosition);
+        }
+
         private (float xAngle, float yAngle) GetTiltAngles()
         {
             if (_accelerometer != null)
@@ -261,6 +353,16 @@ namespace Walterlv.GravityMaze.Game.Models
             }
 
             return (xAngle, yAngle);
+        }
+
+        private double CalculateDistanceSquare(float x1, float y1, float x2, float y2)
+        {
+            return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+        }
+
+        private double CalculateTheta(float x1, float y1, float x2, float y2)
+        {
+            return Tanh((y2 - y1) / (x2 - x1));
         }
     }
 }
