@@ -157,7 +157,7 @@ namespace Walterlv.GravityMaze.Game.Models
                     newYSpeedFromXPart =
                         (float) (-_xSpeed * Sin(theta) * Cos(theta) - _xSpeed * Cos(theta) * Sin(theta));
                     newXSpeedFromYPart =
-                        (float) (_ySpeed * Cos(theta) * Sin(theta) - _ySpeed * Sin(theta) * Cos(theta));
+                        (float) (-_ySpeed * Cos(theta) * Sin(theta) - _ySpeed * Sin(theta) * Cos(theta));
                     newYSpeedFromYPart =
                         (float) (-_ySpeed * Cos(theta) * Cos(theta) + _ySpeed * Sin(theta) * Sin(theta));
                     _xSpeed = newXSpeedFromXPart + newXSpeedFromYPart;
