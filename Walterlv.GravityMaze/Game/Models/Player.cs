@@ -32,7 +32,7 @@ namespace Walterlv.GravityMaze.Game.Models
         /// <summary>
         /// 阻力加速度，单位 m/s²。
         /// </summary>
-        public float ResistanceAcceleration { get; } = 0.05f;
+        public float ResistanceAcceleration { get; } = 0.005f;
 
         /// <summary>
         /// 碰撞损失，单位百分比；表示每次碰撞后剩余冲量的百分比。
@@ -274,7 +274,7 @@ namespace Walterlv.GravityMaze.Game.Models
         {
             if (_accelerometer != null)
             {
-                return GetTiltAnglesByKeyboard();
+                return ((float) (-_yAxis * PI / 2), (float) (-_xAxis * PI / 2));
             }
             else
             {
@@ -286,7 +286,7 @@ namespace Walterlv.GravityMaze.Game.Models
         {
             var input = Context.Input;
             var radianUnit = (float) PI / 720;
-            var maxAngle = (float) PI / 36;
+            var maxAngle = (float) PI / 2;
             float xAngle = _xAngle;
             var yAngle = _yAngle;
 
