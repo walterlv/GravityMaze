@@ -160,14 +160,8 @@ namespace Walterlv.GravityMaze.Game.Models
                         (float) (_ySpeed * Cos(theta) * Sin(theta) - _ySpeed * Sin(theta) * Cos(theta));
                     newYSpeedFromYPart =
                         (float) (-_ySpeed * Cos(theta) * Cos(theta) + _ySpeed * Sin(theta) * Sin(theta));
-                    _xSpeed = (float) (-_xSpeed * Sin(theta) * Sin(theta)
-                                       - _ySpeed * Cos(theta) * Sin(theta)
-                                       + _xSpeed * Cos(theta) * Cos(theta)
-                                       - _ySpeed * Sin(theta) * Cos(theta));
-                    _ySpeed = (float) (-_xSpeed * Sin(theta) * Cos(theta)
-                                       - _ySpeed * Cos(theta) * Cos(theta)
-                                       - _xSpeed * Cos(theta) * Sin(theta)
-                                       + _ySpeed * Sin(theta) * Sin(theta));
+                    _xSpeed = newXSpeedFromXPart + newXSpeedFromYPart;
+                    _ySpeed = newYSpeedFromXPart + newYSpeedFromYPart;
                     // 如果已经插入到墙壁中，则调整位置。
                     xOffset = 0;
                     yOffset = 0;
