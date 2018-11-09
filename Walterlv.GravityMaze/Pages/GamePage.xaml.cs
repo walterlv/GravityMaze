@@ -36,9 +36,7 @@ namespace Walterlv.GravityMaze.Pages
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var min = Math.Min(ActualWidth, ActualHeight);
-            _context.SurfaceBounds =
-                new Rect((ActualWidth - min) / 2 + 1, (ActualHeight - min) / 2 + 1, min - 2, min - 2);
+            _context.SurfaceBounds = new Rect(0, 0, ActualWidth, ActualHeight);
         }
 
         private void OnKeyDown(CoreWindow sender, KeyEventArgs e)
@@ -92,7 +90,7 @@ namespace Walterlv.GravityMaze.Pages
                 var actualUri = new Uri(actual);
 
                 var boardMaterial = await CanvasBitmap.LoadAsync(GameCanvas, actualUri);
-                _game.Board.Material = boardMaterial;
+                _game.Material = boardMaterial;
                 UIPanel.Visibility = Visibility.Collapsed;
             }
         }

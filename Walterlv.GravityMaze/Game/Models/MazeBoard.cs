@@ -1,4 +1,5 @@
-﻿using Windows.Foundation;
+﻿using System;
+using Windows.Foundation;
 using Windows.UI;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI;
@@ -19,7 +20,6 @@ namespace Walterlv.GravityMaze.Game
         public Rect Area { get; private set; }
         public float CellWidth { get; private set; }
         public float CellHeight { get; private set; }
-        public CanvasBitmap Material { get; set; }
 
         public MazeBoard(
             int startColumnIndex, int startRowIndex,
@@ -41,22 +41,15 @@ namespace Walterlv.GravityMaze.Game
 
         protected override void OnUpdate(CanvasTimingInformation timing)
         {
-            Area = Context.SurfaceBounds;
+            var full = Context.SurfaceBounds;
+            var min = Math.Min(full.Width, full.Height);
+            Area = new Rect((full.Width - min) / 2 + 1, (full.Height - min) / 2 + 1, min - 2, min - 2);
             CellWidth = (float) Area.Width / ColumnCount;
             CellHeight = (float) Area.Height / RowCount;
         }
 
         protected override void OnDraw(CanvasDrawingSession ds)
         {
-            if (Material != null)
-            {
-                ds.DrawImage(Material, Area);
-            }
-            else
-            {
-                ds.FillRectangle(Area, Colors.White);
-            }
-
             for (var i = 0; i < RowCount; i++)
             {
                 for (var j = 0; j < ColumnCount; j++)
@@ -78,10 +71,10 @@ namespace Walterlv.GravityMaze.Game
                 }
             }
 
-            ds.FillRectangle((float) Context.SurfaceBounds.Right - 1, (float) Context.SurfaceBounds.Top - 1,
-                2, (float) Context.SurfaceBounds.Height + 2, Colors.Black);
-            ds.FillRectangle((float) Context.SurfaceBounds.Left - 1, (float) Context.SurfaceBounds.Bottom - 1,
-                (float) Context.SurfaceBounds.Width + 2, 2, Colors.Black);
+            ds.FillRectangle((float) Area.Right - 1, (float) Area.Top - 1,
+                2, (float) Area.Height + 2, Colors.Black);
+            ds.FillRectangle((float) Area.Left - 1, (float) Area.Bottom - 1,
+                (float) Area.Width + 2, 2, Colors.Black);
         }
 
         public (bool left, bool up) GetWallInfo(int column, int row)

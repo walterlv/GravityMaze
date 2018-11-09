@@ -23,7 +23,7 @@
                 <Image Width="256" Height="256"
                        Source="/Assets/Game/Boards/soft-sofa-fabric.thumbnail.png" />
                 <Image Width="256" Height="256"
-                       Source="/Assets/Game/Boards/wood-table.thumbnail.png" />
+                       Source="/Assets/Game/Boards/stock.thumbnail.png" />
                 <Image Width="256" Height="256"
                        Source="/Assets/Game/Boards/mac-touchpad-aluminum.thumbnail.png" />
                 <Image Width="256" Height="256"
