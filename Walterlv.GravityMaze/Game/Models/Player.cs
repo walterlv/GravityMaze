@@ -143,8 +143,8 @@ namespace Walterlv.GravityMaze.Game.Models
                     leftCornerPosition, centerCornerPosition, rightCornerPosition,
                     upCornerPosition, middleCornerPosition, downCornerPosition)
                 = GetCellCornerInfoByPosition(_xPosition, _yPosition);
-            var collided = false;
-            if ((hasLeft && _xSpeed < 0) || (hasRight && _xSpeed > 0))
+            if ((hasLeft && _xSpeed < 0) || (hasRight && _xSpeed > 0)
+                                         || (hasUp && _ySpeed < 0) || (hasDown && _ySpeed > 0))
             {
                 var distanceSquare =
                     CalculateDistanceSquare(centerCornerPosition, middleCornerPosition, _xPosition, _yPosition);
@@ -155,35 +155,12 @@ namespace Walterlv.GravityMaze.Game.Models
                         (float) (-_xSpeed * Sin(theta) * Sin(theta) + _xSpeed * Cos(theta) * Cos(theta));
                     newYSpeedFromXPart =
                         (float) (-_xSpeed * Sin(theta) * Cos(theta) - _xSpeed * Cos(theta) * Sin(theta));
-                    collided = true;
-                    _xSpeed = newXSpeedFromXPart;
-                    _ySpeed = newYSpeedFromXPart;
-                }
-            }
-
-            if ((hasUp && _ySpeed < 0) || (hasDown && _ySpeed > 0))
-            {
-                var distanceSquare =
-                    CalculateDistanceSquare(centerCornerPosition, middleCornerPosition, _xPosition, _yPosition);
-                if (distanceSquare < _radius * _radius)
-                {
-                    var theta = CalculateTheta(centerCornerPosition, middleCornerPosition, _xPosition, _yPosition);
                     newXSpeedFromYPart =
                         (float) (_ySpeed * Cos(theta) * Sin(theta) - _ySpeed * Sin(theta) * Cos(theta));
                     newYSpeedFromYPart =
                         (float) (-_ySpeed * Cos(theta) * Cos(theta) + _ySpeed * Sin(theta) * Sin(theta));
-                    if (collided)
-                    {
-                        _xSpeed += newXSpeedFromYPart;
-                        _ySpeed += newYSpeedFromYPart;
-                    }
-                    else
-                    {
-                        _xSpeed = newXSpeedFromYPart;
-                        _ySpeed = newYSpeedFromYPart;
-                    }
-
-                    collided = true;
+                    _xSpeed = newXSpeedFromXPart;
+                    _ySpeed = newYSpeedFromXPart;
                 }
             }
 
