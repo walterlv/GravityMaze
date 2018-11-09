@@ -286,7 +286,7 @@ namespace Walterlv.GravityMaze.Game.Models
         {
             var input = Context.Input;
             var radianUnit = (float) PI / 720;
-            var maxAngle = (float) PI / 2;
+            var maxAngle = (float) PI / 3;
             float xAngle = _xAngle;
             var yAngle = _yAngle;
 
