@@ -167,48 +167,6 @@ namespace Walterlv.GravityMaze.Game.Models
                     // 如果已经插入到墙壁中，则调整位置。
                     xOffset = 0;
                     yOffset = 0;
-                    var theta1 = theta;
-                    var theta3 = _xSpeed == 0 ? PI / 2 : Tanh(_ySpeed / _xSpeed);
-                    var theta2 = PI / 2 - theta1 - theta3;
-                    var alpha = Sinh(distance * Sin(theta2) / _radius);
-                    var nearlyOffset = distance * Cos(theta2) - _radius * Cos(alpha);
-                    //_xPosition += (float)(nearlyOffset * Cos(theta3));
-                    //_yPosition += (float)(nearlyOffset * Sin(theta3));
-                    //if (_xSpeed > 0 && _ySpeed > 0)
-                    //{
-                    //    _xPosition += (float) (nearlyOffset * Cos(theta3));
-                    //    _yPosition += (float) (nearlyOffset * Sin(theta3));
-                    //}
-                    //else if (_xSpeed > 0 && _ySpeed < 0)
-                    //{
-                    //    _xPosition += (float) (nearlyOffset * Cos(theta3));
-                    //    _yPosition += (float) (nearlyOffset * Sin(theta3));
-                    //}
-                    //else if (_xSpeed < 0 && _ySpeed > 0)
-                    //{
-                    //    _xPosition += (float) (nearlyOffset * Cos(theta3));
-                    //    _yPosition += (float) (nearlyOffset * Sin(theta3));
-                    //}
-                    //else if (_xSpeed < 0 && _ySpeed < 0)
-                    //{
-                    //    _xPosition += (float) (nearlyOffset * Cos(theta3));
-                    //    _yPosition += (float) (nearlyOffset * Sin(theta3));
-                    //}
-                    //else if (_xSpeed > 0)
-                    //{
-                    //}
-                    //else if (_xSpeed < 0)
-                    //{
-                    //}
-                    //else if (_ySpeed > 0)
-                    //{
-                    //}
-                    //else if (_ySpeed < 0)
-                    //{
-                    //}
-
-                    //_xPosition = xCornerPosition - (float) (_radius * Cos(theta));
-                    //_yPosition = yCornerPosition - (float) (_radius * Sin(theta));
                     _xSpeed = newXSpeedFromXPart + newXSpeedFromYPart;
                     _ySpeed = newYSpeedFromXPart + newYSpeedFromYPart;
                 }
