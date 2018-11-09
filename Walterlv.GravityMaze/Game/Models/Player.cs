@@ -56,6 +56,14 @@ namespace Walterlv.GravityMaze.Game.Models
             }
         }
 
+        private void Accelerometer_ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs e)
+        {
+            AccelerometerReading reading = e.Reading;
+            _xAxis = (float) reading.AccelerationX;
+            _yAxis = (float) reading.AccelerationY;
+            _zAxis = (float) reading.AccelerationZ;
+        }
+
         protected override void OnUpdate(CanvasTimingInformation timing)
         {
             var seconds = timing.ElapsedTime.TotalSeconds;
@@ -196,14 +204,6 @@ namespace Walterlv.GravityMaze.Game.Models
                 up, (float) (_board.Area.Top + _board.CellHeight * row),
                 right, (float) (_board.Area.Left + _board.CellWidth * (column + 1)),
                 down, (float) (_board.Area.Top + _board.CellHeight * (row + 1)));
-        }
-
-        private void Accelerometer_ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs e)
-        {
-            AccelerometerReading reading = e.Reading;
-            _xAxis = (float) reading.AccelerationX;
-            _yAxis = (float) reading.AccelerationY;
-            _zAxis = (float) reading.AccelerationZ;
         }
 
         private (float xAngle, float yAngle) GetTiltAngles()
