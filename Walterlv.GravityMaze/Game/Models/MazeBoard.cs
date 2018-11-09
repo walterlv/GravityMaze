@@ -69,6 +69,11 @@ namespace Walterlv.GravityMaze.Game
                     }
                 }
             }
+
+            ds.FillRectangle((float) Context.SurfaceBounds.Right - 1, (float) Context.SurfaceBounds.Top - 1,
+                2, (float) Context.SurfaceBounds.Height + 2, Colors.Black);
+            ds.FillRectangle((float) Context.SurfaceBounds.Left - 1, (float) Context.SurfaceBounds.Bottom - 1,
+                (float) Context.SurfaceBounds.Width + 2, 2, Colors.Black);
         }
 
         public (bool left, bool up) GetWallInfo(int column, int row)

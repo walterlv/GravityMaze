@@ -44,7 +44,9 @@ namespace Walterlv.GravityMaze
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _context.SurfaceBounds = new Rect(0, 0, ActualWidth, ActualHeight);
+            var min = Math.Min(ActualWidth, ActualHeight);
+            _context.SurfaceBounds =
+                new Rect((ActualWidth - min) / 2 + 1, (ActualHeight - min) / 2 + 1, min - 2, min - 2);
         }
 
         private void OnKeyDown(CoreWindow sender, KeyEventArgs e)
