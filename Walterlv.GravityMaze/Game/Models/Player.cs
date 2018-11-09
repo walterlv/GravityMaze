@@ -85,9 +85,9 @@ namespace Walterlv.GravityMaze.Game.Models
             // 叠加阻力带来的与速度反向的加速度。
             var speedTheta = CalculateTheta(0f, 0f, _xSpeed, _ySpeed);
             (_xSpeed, xAcceleration) = SuperpositionAcceleration(
-                _xSpeed, xAcceleration, (float) Abs(resistanceAcceleration * Cos(speedTheta)), seconds);
+                _xSpeed, xAcceleration, (float) Abs(resistanceAcceleration * Sin(speedTheta)), seconds);
             (_ySpeed, yAcceleration) = SuperpositionAcceleration(
-                _ySpeed, yAcceleration, (float) Abs(resistanceAcceleration * Sin(speedTheta)), seconds);
+                _ySpeed, yAcceleration, (float) Abs(resistanceAcceleration * Cos(speedTheta)), seconds);
 
             // 计算此加速度和此初速度下的位置偏移量。
             var xOffset = (float) (_xSpeed * seconds + xAcceleration * seconds * seconds / 2);
@@ -140,18 +140,14 @@ namespace Walterlv.GravityMaze.Game.Models
             // --- x ---
             //     |
             var (newXSpeedFromXPart, newYSpeedFromXPart, newXSpeedFromYPart, newYSpeedFromYPart) = (0f, 0f, 0f, 0f);
-            var (hasLeft, hasUp, hasRight, hasDown,
-                    leftCornerPosition, centerCornerPosition, rightCornerPosition,
-                    upCornerPosition, middleCornerPosition, downCornerPosition)
-                = GetCellCornerInfoByPosition(_xPosition, _yPosition);
-            if ((hasLeft && _xSpeed < 0) || (hasRight && _xSpeed > 0)
-                                         || (hasUp && _ySpeed < 0) || (hasDown && _ySpeed > 0))
+            var (hasCorner, xCornerPosition, yCornerPosition) = GetCellCornerInfoByPosition(_xPosition, _yPosition);
+            if (hasCorner && (_xSpeed != 0 || _ySpeed != 0))
             {
                 var distanceSquare =
-                    CalculateDistanceSquare(centerCornerPosition, middleCornerPosition, _xPosition, _yPosition);
+                    CalculateDistanceSquare(xCornerPosition, yCornerPosition, _xPosition, _yPosition);
                 if (distanceSquare < _radius * _radius)
                 {
-                    var theta = CalculateTheta(centerCornerPosition, middleCornerPosition, _xPosition, _yPosition);
+                    var theta = CalculateTheta(xCornerPosition, yCornerPosition, _xPosition, _yPosition);
                     newXSpeedFromXPart =
                         (float) (-_xSpeed * Sin(theta) * Sin(theta) + _xSpeed * Cos(theta) * Cos(theta));
                     newYSpeedFromXPart =
@@ -232,9 +228,7 @@ namespace Walterlv.GravityMaze.Game.Models
                 down, (float) (_board.Area.Top + _board.CellHeight * (row + 1)));
         }
 
-        private (bool hasLeft, bool hasUp, bool hasRight, bool hasDown,
-            float leftPosition, float centerPosition, float RightPosition,
-            float upPosition, float middlePosition, float downPosition)
+        private (bool hasCorner, float xCornerPosition, float yCornerPosition)
             GetCellCornerInfoByPosition(float xPosition, float yPosition)
         {
             var columnIndex = (xPosition - _board.Area.Left) / _board.CellWidth;
@@ -252,23 +246,17 @@ namespace Walterlv.GravityMaze.Game.Models
             var middlePosition = (float) (_board.Area.Top + _board.CellHeight * (int) down);
             var downPosition = (float) (_board.Area.Top + _board.CellHeight * ((int) down + 1));
 
-            var (hasLeft, hasUp, hasRight, hasDown) = (false, false, false, false);
-
-            if ((int) left != (int) right)
+            var hasCorner = (int) left != (int) right || (int) up != (int) down;
+            if (hasCorner)
             {
-                hasUp = _board.GetWallInfo((int) right, (int) up).left;
-                hasDown = _board.GetWallInfo((int) right, (int) down).left;
+                var hasLeft = _board.GetWallInfo((int) left, (int) down).up;
+                var hasUp = _board.GetWallInfo((int) right, (int) up).left;
+                var hasRight = _board.GetWallInfo((int) right, (int) down).up;
+                var hasDown = _board.GetWallInfo((int) right, (int) down).left;
+                hasCorner = hasLeft || hasUp || hasRight || hasDown;
             }
 
-            if ((int) up != (int) down)
-            {
-                hasLeft = _board.GetWallInfo((int) left, (int) down).up;
-                hasRight = _board.GetWallInfo((int) right, (int) down).up;
-            }
-
-            return (hasLeft, hasUp, hasRight, hasDown,
-                leftPosition, centerPosition, RightPosition,
-                upPosition, middlePosition, downPosition);
+            return (hasCorner, centerPosition, middlePosition);
         }
 
         private (float xAngle, float yAngle) GetTiltAngles()
@@ -335,7 +323,7 @@ namespace Walterlv.GravityMaze.Game.Models
 
         private float CalculateTheta(float x1, float y1, float x2, float y2)
         {
-            return (float) Tanh((y2 - y1) / (x2 - x1));
+            return (float) Tanh((x2 - x1) / (y2 - y1));
         }
     }
 }
