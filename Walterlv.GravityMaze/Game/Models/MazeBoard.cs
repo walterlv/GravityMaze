@@ -3,7 +3,6 @@ using Windows.UI;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI;
 using Walterlv.GravityMaze.Game.Framework;
-using System;
 
 namespace Walterlv.GravityMaze.Game
 {
@@ -51,7 +50,7 @@ namespace Walterlv.GravityMaze.Game
         {
             if (Material != null)
             {
-                ds.DrawImage(Material);
+                ds.DrawImage(Material, Area);
             }
             else
             {
