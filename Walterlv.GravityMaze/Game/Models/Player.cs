@@ -11,6 +11,7 @@ namespace Walterlv.GravityMaze.Game.Models
     {
         private readonly MazeBoard _board;
         private readonly Accelerometer _accelerometer;
+
         private float _xAngle;
         private float _yAngle;
         private float _xSpeed;
@@ -21,6 +22,12 @@ namespace Walterlv.GravityMaze.Game.Models
         private float _xAxis;
         private float _yAxis;
         private float _zAxis;
+
+        public float GravityAcceleration { get; } = 10f;
+        public float ResistanceAcceleration { get; } = 0.05f;
+        public float CollisionLoss { get; } = 0.4f;
+        public float RadiusRatio { get; } = 0.4f;
+        public float PixelsPerMetre { get; } = 4000f;
 
         public Player(MazeBoard board)
         {
@@ -39,12 +46,10 @@ namespace Walterlv.GravityMaze.Game.Models
         {
             var seconds = timing.ElapsedTime.TotalSeconds;
 
-            var baseAcceleration = 10f;
-            baseAcceleration = baseAcceleration * Math.Min(_board.CellWidth, _board.CellHeight) * 20;
-            var resistanceAcceleration = 0.1f;
-            resistanceAcceleration = resistanceAcceleration * Math.Min(_board.CellWidth, _board.CellHeight) * 20;
-            _radius = (float) (Math.Min(_board.CellWidth, _board.CellHeight) * 0.4);
-            var tooSlowSpeed = Math.Min(_board.CellWidth, _board.CellHeight) / 2;
+            var cellSize = Math.Min(_board.CellWidth, _board.CellHeight);
+            var baseAcceleration = GravityAcceleration * PixelsPerMetre;
+            var resistanceAcceleration = ResistanceAcceleration * PixelsPerMetre;
+            _radius = cellSize * RadiusRatio;
 
             // 计算这一帧的倾斜角度。
             (_xAngle, _yAngle) = GetTiltAngles();
@@ -85,23 +90,23 @@ namespace Walterlv.GravityMaze.Game.Models
 
             if (left && _xSpeed < 0 && _xPosition - _radius < leftPosition)
             {
-                _xSpeed = -_xSpeed * 0.8f;
+                _xSpeed = -_xSpeed * CollisionLoss;
                 _xPosition = leftPosition + _radius;
             }
             else if (right && _xSpeed > 0 && _xPosition + _radius > rightPosition)
             {
-                _xSpeed = -_xSpeed * 0.8f;
+                _xSpeed = -_xSpeed * CollisionLoss;
                 _xPosition = rightPosition - _radius;
             }
 
             if (up && _ySpeed < 0 && _yPosition - _radius < upPosition)
             {
-                _ySpeed = -_ySpeed * 0.8f;
+                _ySpeed = -_ySpeed * CollisionLoss;
                 _yPosition = upPosition + _radius;
             }
             else if (down && _ySpeed > 0 && _yPosition + _radius > downPosition)
             {
-                _ySpeed = -_ySpeed * 0.8f;
+                _ySpeed = -_ySpeed * CollisionLoss;
                 _yPosition = downPosition - _radius;
             }
 
