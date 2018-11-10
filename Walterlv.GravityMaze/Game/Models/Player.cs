@@ -339,59 +339,39 @@ namespace Walterlv.GravityMaze.Game.Models
             }
             else
             {
+                var x = (float) ((_xPosition - _radius) * bitmap.Size.Width / bounds.Width);
+                var y = (float) ((_yPosition - _radius) * bitmap.Size.Height / bounds.Height);
+                var w = (_radius + _radius) * bitmap.Size.Width / bounds.Width;
+                var h = (_radius + _radius) * bitmap.Size.Height / bounds.Height;
+
+                var morphology = new MorphologyEffect
+                {
+                    Source = bitmap,
+                    Mode = MorphologyEffectMode.Dilate,
+                    Width = 40,
+                    Height = 40,
+                };
+
+                var crop = new CropEffect
+                {
+                    Source = morphology,
+                    SourceRectangle = new Rect(
+                        _xPosition - _radius, _yPosition - _radius,
+                        _radius + _radius, _radius + _radius),
+                };
+
                 using (var list = new CanvasCommandList(creator))
                 {
-
-                    var x = (float) ((_xPosition - _radius) * bitmap.Size.Width / bounds.Width);
-                    var y = (float) ((_yPosition - _radius) * bitmap.Size.Height / bounds.Height);
-                    var w = (_radius + _radius) * bitmap.Size.Width / bounds.Width;
-                    var h = (_radius + _radius) * bitmap.Size.Height / bounds.Height;
-
-                    var morphology = new MorphologyEffect
+                    using (var s = list.CreateDrawingSession())
                     {
-                        Source = bitmap,
-                        Mode = MorphologyEffectMode.Dilate,
-                        Width = 40,
-                        Height = 40,
-                    };
-
-                    var crop = new CropEffect
-                    {
-                        Source = morphology,
-                        SourceRectangle = new Rect(_xPosition-_radius, _yPosition-_radius, _radius+_radius, _radius+_radius),
-                    };
+                        s.FillEllipse(_xPosition, _yPosition, _radius, _radius, Colors.Black);
+                    }
 
                     var mask = new AlphaMaskEffect
                     {
                         Source = crop,
                         AlphaMask = list,
                     };
-
-                    using (var s = list.CreateDrawingSession())
-                    {
-                        s.FillEllipse(_xPosition, _yPosition, _radius, _radius, Colors.Black);
-                    }
-
-                    //var effect = new DisplacementMapEffect
-                    //{
-                    //    Source = bitmap,
-                    //    XChannelSelect = EffectChannelSelect.Red,
-                    //    YChannelSelect = EffectChannelSelect.Green,
-                    //    Amount = 100f,
-                    //    Displacement = new Transform2DEffect()
-                    //    {
-                    //        TransformMatrix = Matrix3x2.CreateTranslation(dispX, dispY),
-                    //        Source = new BorderEffect()
-                    //        {
-                    //            ExtendX = CanvasEdgeBehavior.Mirror,
-                    //            ExtendY = CanvasEdgeBehavior.Mirror,
-                    //            Source = new TurbulenceEffect()
-                    //            {
-                    //                Octaves = 3
-                    //            }
-                    //        }
-                    //    }
-                    //};
 
                     ds.DrawImage(mask);
                 }
