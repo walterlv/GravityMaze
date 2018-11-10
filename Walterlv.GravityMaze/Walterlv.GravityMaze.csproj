@@ -99,6 +99,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Game\Models\Hole.cs" />
     <Compile Include="Game\Models\Material.cs" />
     <Compile Include="Game\Actions\PredefinedOptions.cs" />
     <Compile Include="Game\Framework\GameContext.cs" />

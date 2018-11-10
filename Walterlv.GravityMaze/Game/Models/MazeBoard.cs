@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Windows.Foundation;
 using Windows.UI;
 using Microsoft.Graphics.Canvas;
@@ -8,7 +10,7 @@ using Walterlv.GravityMaze.Game.Models;
 
 namespace Walterlv.GravityMaze.Game
 {
-    public class MazeBoard : GameObject
+    public class MazeBoard : GameObject, IEnumerable
     {
         private readonly int[] _mazeData;
 
@@ -23,6 +25,7 @@ namespace Walterlv.GravityMaze.Game
         public float CellHeight { get; private set; }
 
         public Material Material { get; set; } = Material.Default;
+        private readonly List<Hole> Holes = new List<Hole>();
 
         public MazeBoard(
             int startColumnIndex, int startRowIndex,
@@ -89,5 +92,8 @@ namespace Walterlv.GravityMaze.Game
             var up = data & upFlag;
             return (left != 0, up != 0);
         }
+
+        public void Add(float column, float row) => Holes.Add(new Hole(column, row));
+        public IEnumerator GetEnumerator() => Holes.GetEnumerator();
     }
 }
