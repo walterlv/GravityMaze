@@ -81,6 +81,14 @@ namespace Walterlv.GravityMaze.Game
                 2, (float) Area.Height + 2, Colors.Black);
             ds.FillRectangle((float) Area.Left - 1, (float) Area.Bottom - 1,
                 (float) Area.Width + 2, 2, Colors.Black);
+
+            foreach (var hole in Holes)
+            {
+                ds.FillEllipse(
+                    (float) (Area.Left + CellWidth * (hole.Column + 0.5f)),
+                    (float) (Area.Top + CellHeight * (hole.Row + 0.5f)),
+                    (float) (CellWidth / 2), (float) (CellWidth / 2), Colors.Black);
+            }
         }
 
         public (bool left, bool up) GetWallInfo(int column, int row)
