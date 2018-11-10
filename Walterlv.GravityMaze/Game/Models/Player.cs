@@ -7,7 +7,6 @@ using Windows.Devices.Sensors;
 using Windows.Foundation;
 using Microsoft.Graphics.Canvas.Effects;
 using static System.Math;
-using System.Numerics;
 
 namespace Walterlv.GravityMaze.Game.Models
 {
@@ -37,6 +36,8 @@ namespace Walterlv.GravityMaze.Game.Models
         /// 玩家尺寸占一个格子中的尺寸百分比。
         /// </summary>
         public float SizeRatio { get; } = 0.8f;
+
+        public bool EnteredAHole { get; private set; }
 
         public Player(MazeGame game, MazeBoard board)
         {
@@ -77,12 +78,29 @@ namespace Walterlv.GravityMaze.Game.Models
             var xAcceleration = (float) Sin(_xAngle) * baseAcceleration;
             var yAcceleration = (float) Sin(_yAngle) * baseAcceleration;
 
+            // 叠加洞带来的引力加速度。
+            var (enteredAHole, xHolePosition, yHolePosition) = GetAccelerationFromHoles(_xPosition, _yPosition);
+            EnteredAHole = enteredAHole;
+            if (EnteredAHole)
+            {
+                _xPosition = xHolePosition;
+                _yPosition = yHolePosition;
+                return;
+            }
+
             // 叠加阻力带来的与速度反向的加速度。
             var speedTheta = CalculateTheta(0f, 0f, _xSpeed, _ySpeed);
             (_xSpeed, xAcceleration) = SuperpositionAcceleration(
                 _xSpeed, xAcceleration, (float) Abs(resistanceAcceleration * Sin(speedTheta)), seconds);
             (_ySpeed, yAcceleration) = SuperpositionAcceleration(
                 _ySpeed, yAcceleration, (float) Abs(resistanceAcceleration * Cos(speedTheta)), seconds);
+
+            // 洞带来了速度跌落。
+            if (EnteredAHole)
+            {
+                _xPosition = xAcceleration;
+                _yPosition = yAcceleration;
+            }
 
             // 计算此加速度和此初速度下的位置偏移量。
             var xOffset = (float) (_xSpeed * seconds + xAcceleration * seconds * seconds / 2);
@@ -171,6 +189,26 @@ namespace Walterlv.GravityMaze.Game.Models
             // 计算下一帧的速度。
             _xSpeed += (float) (xAcceleration * seconds);
             _ySpeed += (float) (yAcceleration * seconds);
+        }
+
+        /// <summary>
+        /// 根据当前速度、加速度和经过的时间，计算叠加了阻力后的加速度和速度。
+        /// </summary>
+        private (bool enteredAHole, float xHolePosition, float yHolePosition) GetAccelerationFromHoles(
+            float xPosition, float yPosition)
+        {
+            var columnIndex = (float) ((xPosition - _board.Area.Left) / _board.CellWidth);
+            var rowIndex = (float) ((yPosition - _board.Area.Top) / _board.CellHeight);
+
+            var (x, y) = _board.GetHolePosition(columnIndex, rowIndex);
+            return (x != 0 || y != 0, (float) (_board.Area.Left + x * _board.CellWidth),
+                (float) (_board.Area.Top + y * _board.CellHeight));
+            // 万有引力定律：F引 = GMm/r²
+            //var offsetSqure = x * x + y * y;
+            //var force = 1000 / offsetSqure;
+            //var radius = Sqrt(offsetSqure);
+            //var theta = Sinh(column / radius);
+            //return ((float)(-force * Sin(theta)), (float)(-force * Cos(theta)));
         }
 
         /// <summary>

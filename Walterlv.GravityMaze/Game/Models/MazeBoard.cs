@@ -7,6 +7,7 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI;
 using Walterlv.GravityMaze.Game.Framework;
 using Walterlv.GravityMaze.Game.Models;
+using static System.Math;
 
 namespace Walterlv.GravityMaze.Game
 {
@@ -93,12 +94,32 @@ namespace Walterlv.GravityMaze.Game
 
         public (bool left, bool up) GetWallInfo(int column, int row)
         {
+            if (row >= _mazeData.Length || row < 0)
+            {
+                return (true, true);
+            }
             var data = _mazeData[row];
             var leftFlag = 1 << (ColumnCount - column) * 2 + 1;
             var upFlag = 1 << (ColumnCount - column) * 2;
             var left = data & leftFlag;
             var up = data & upFlag;
             return (left != 0, up != 0);
+        }
+
+        public (float xPosition, float yPosition) GetHolePosition(float column, float row)
+        {
+            foreach (var hole in Holes)
+            {
+                var columnOffset = hole.Column + 0.5f - column;
+                var rowOffset = hole.Row + 0.5f - row;
+                var offsetSqure = columnOffset * columnOffset + rowOffset * rowOffset;
+                if (offsetSqure <= 0.25)
+                {
+                    return (hole.Column + 0.5f, hole.Row + 0.5f);
+                }
+            }
+
+            return (0f, 0f);
         }
 
         public void Add(float column, float row) => Holes.Add(new Hole(column, row));
