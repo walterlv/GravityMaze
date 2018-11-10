@@ -339,11 +339,6 @@ namespace Walterlv.GravityMaze.Game.Models
             }
             else
             {
-                var x = (float) ((_xPosition - _radius) * bitmap.Size.Width / bounds.Width);
-                var y = (float) ((_yPosition - _radius) * bitmap.Size.Height / bounds.Height);
-                var w = (_radius + _radius) * bitmap.Size.Width / bounds.Width;
-                var h = (_radius + _radius) * bitmap.Size.Height / bounds.Height;
-
                 var morphology = new MorphologyEffect
                 {
                     Source = bitmap,
