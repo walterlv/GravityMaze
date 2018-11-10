@@ -368,6 +368,14 @@ namespace Walterlv.GravityMaze.Game.Models
                         AlphaMask = list,
                     };
 
+                    var shadow = new ShadowEffect
+                    {
+                        Source = mask,
+                        BlurAmount = 4,
+                        ShadowColor = Color.FromArgb(0x40, 0x00, 0x00, 0x00),
+                    };
+
+                    ds.DrawImage(shadow);
                     ds.DrawImage(mask);
                 }
             }
