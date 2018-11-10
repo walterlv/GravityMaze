@@ -27,7 +27,7 @@ namespace Walterlv.GravityMaze.Game
         public MazeGame()
         {
             Board = PredefinedOptions.Boards.First().Value;
-            Player player = new Player(Board);
+            Player player = new Player(this, Board);
             AddChildren(Board, player);
         }
 

@@ -28,6 +28,7 @@ namespace Walterlv.GravityMaze.Pages
             _game = new MazeGame
             {
                 Context = _context,
+                ResourceCreator = GameCanvas,
             };
 
             SizeChanged += OnSizeChanged;

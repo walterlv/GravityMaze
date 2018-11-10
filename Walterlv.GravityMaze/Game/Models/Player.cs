@@ -4,12 +4,16 @@ using Windows.UI;
 using Microsoft.Graphics.Canvas.UI;
 using Walterlv.GravityMaze.Game.Framework;
 using Windows.Devices.Sensors;
+using Windows.Foundation;
+using Microsoft.Graphics.Canvas.Effects;
 using static System.Math;
+using System.Numerics;
 
 namespace Walterlv.GravityMaze.Game.Models
 {
     public class Player : GameObject
     {
+        private readonly MazeGame _game;
         private readonly MazeBoard _board;
         private readonly Accelerometer _accelerometer;
 
@@ -34,8 +38,9 @@ namespace Walterlv.GravityMaze.Game.Models
         /// </summary>
         public float SizeRatio { get; } = 0.8f;
 
-        public Player(MazeBoard board)
+        public Player(MazeGame game, MazeBoard board)
         {
+            _game = game;
             _board = board;
             _accelerometer = Accelerometer.GetDefault();
             if (_accelerometer != null)
@@ -325,7 +330,72 @@ namespace Walterlv.GravityMaze.Game.Models
 
         protected override void OnDraw(CanvasDrawingSession ds)
         {
-            ds.FillEllipse(_xPosition, _yPosition, _radius, _radius, Colors.Gray);
+            var creator = ResourceCreator;
+            var bitmap = _game.Material.bitmap;
+            var bounds = Context.SurfaceBounds;
+            if (creator == null || bitmap == null)
+            {
+                ds.FillEllipse(_xPosition, _yPosition, _radius, _radius, Colors.Gray);
+            }
+            else
+            {
+                using (var list = new CanvasCommandList(creator))
+                {
+
+                    var x = (float) ((_xPosition - _radius) * bitmap.Size.Width / bounds.Width);
+                    var y = (float) ((_yPosition - _radius) * bitmap.Size.Height / bounds.Height);
+                    var w = (_radius + _radius) * bitmap.Size.Width / bounds.Width;
+                    var h = (_radius + _radius) * bitmap.Size.Height / bounds.Height;
+
+                    var morphology = new MorphologyEffect
+                    {
+                        Source = bitmap,
+                        Mode = MorphologyEffectMode.Dilate,
+                        Width = 40,
+                        Height = 40,
+                    };
+
+                    var crop = new CropEffect
+                    {
+                        Source = morphology,
+                        SourceRectangle = new Rect(_xPosition-_radius, _yPosition-_radius, _radius+_radius, _radius+_radius),
+                    };
+
+                    var mask = new AlphaMaskEffect
+                    {
+                        Source = crop,
+                        AlphaMask = list,
+                    };
+
+                    using (var s = list.CreateDrawingSession())
+                    {
+                        s.FillEllipse(_xPosition, _yPosition, _radius, _radius, Colors.Black);
+                    }
+
+                    //var effect = new DisplacementMapEffect
+                    //{
+                    //    Source = bitmap,
+                    //    XChannelSelect = EffectChannelSelect.Red,
+                    //    YChannelSelect = EffectChannelSelect.Green,
+                    //    Amount = 100f,
+                    //    Displacement = new Transform2DEffect()
+                    //    {
+                    //        TransformMatrix = Matrix3x2.CreateTranslation(dispX, dispY),
+                    //        Source = new BorderEffect()
+                    //        {
+                    //            ExtendX = CanvasEdgeBehavior.Mirror,
+                    //            ExtendY = CanvasEdgeBehavior.Mirror,
+                    //            Source = new TurbulenceEffect()
+                    //            {
+                    //                Octaves = 3
+                    //            }
+                    //        }
+                    //    }
+                    //};
+
+                    ds.DrawImage(mask);
+                }
+            }
         }
     }
 }
