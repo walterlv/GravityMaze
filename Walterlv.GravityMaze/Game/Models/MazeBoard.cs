@@ -17,10 +17,10 @@ namespace Walterlv.GravityMaze.Game
 
         public int ColumnCount { get; }
         public int RowCount { get; }
-        public int StartColumnIndex { get; }
-        public int StartRowIndex { get; }
-        public int EndColumnIndex { get; }
-        public int EndRowIndex { get; }
+        public float StartColumnIndex { get; }
+        public float StartRowIndex { get; }
+        public float EndColumnIndex { get; }
+        public float EndRowIndex { get; }
         public Rect Area { get; private set; }
         public float CellWidth { get; private set; }
         public float CellHeight { get; private set; }
@@ -29,8 +29,8 @@ namespace Walterlv.GravityMaze.Game
         private readonly List<Hole> Holes = new List<Hole>();
 
         public MazeBoard(
-            int startColumnIndex, int startRowIndex,
-            int endColumnIndex, int endRowIndex,
+            float startColumnIndex, float startRowIndex,
+            float endColumnIndex, float endRowIndex,
             params int[] mazeData)
         {
             _mazeData = mazeData;
