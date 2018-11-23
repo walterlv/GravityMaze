@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Microsoft.Graphics.Canvas;
+﻿using Microsoft.Graphics.Canvas;
 using Walterlv.GravityMaze.Game.Actions;
 using Walterlv.GravityMaze.Game.Framework;
 using Walterlv.GravityMaze.Game.Models;
