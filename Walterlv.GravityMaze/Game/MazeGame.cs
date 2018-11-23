@@ -3,6 +3,7 @@ using Walterlv.GravityMaze.Game.Actions;
 using Walterlv.GravityMaze.Game.Framework;
 using Walterlv.GravityMaze.Game.Models;
 using Windows.UI;
+using Microsoft.Graphics.Canvas.UI;
 
 namespace Walterlv.GravityMaze.Game
 {
@@ -28,6 +29,10 @@ namespace Walterlv.GravityMaze.Game
             Board = PredefinedOptions.Boards["3"];
             Player player = new Player(this, Board);
             AddChildren(Board, player);
+        }
+
+        protected override void OnUpdate(CanvasTimingInformation timing)
+        {
         }
 
         protected override void OnDraw(CanvasDrawingSession ds)

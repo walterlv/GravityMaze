@@ -39,6 +39,8 @@ namespace Walterlv.GravityMaze.Game.Models
 
         public bool EnteredAHole { get; private set; }
 
+        public bool EnteredDestination { get; private set; }
+
         public Player(MazeGame game, MazeBoard board)
         {
             _game = game;
@@ -79,9 +81,11 @@ namespace Walterlv.GravityMaze.Game.Models
             var yAcceleration = (float) Sin(_yAngle) * baseAcceleration;
 
             // 叠加洞带来的引力加速度。
-            var (enteredAHole, xHolePosition, yHolePosition) = GetAccelerationFromHoles(_xPosition, _yPosition);
+            var (enteredAHole, enteredDestination, xHolePosition, yHolePosition) =
+                GetAccelerationFromHoles(_xPosition, _yPosition);
             EnteredAHole = enteredAHole;
-            if (EnteredAHole)
+            EnteredDestination = enteredDestination;
+            if (EnteredAHole || EnteredDestination)
             {
                 _xPosition = xHolePosition;
                 _yPosition = yHolePosition;
@@ -192,16 +196,17 @@ namespace Walterlv.GravityMaze.Game.Models
         }
 
         /// <summary>
-        /// 根据当前速度、加速度和经过的时间，计算叠加了阻力后的加速度和速度。
+        /// 
         /// </summary>
-        private (bool enteredAHole, float xHolePosition, float yHolePosition) GetAccelerationFromHoles(
-            float xPosition, float yPosition)
+        private (bool enteredAHole, bool enteredDestination, float xHolePosition, float yHolePosition) 
+            GetAccelerationFromHoles(float xPosition, float yPosition)
         {
             var columnIndex = (float) ((xPosition - _board.Area.Left) / _board.CellWidth);
             var rowIndex = (float) ((yPosition - _board.Area.Top) / _board.CellHeight);
 
             var (x, y) = _board.GetHolePosition(columnIndex, rowIndex);
-            return (x != 0 || y != 0, (float) (_board.Area.Left + x * _board.CellWidth),
+            var (dx, dy) = _board.GetDestinationPosition(columnIndex, rowIndex);
+            return (x != 0 || y != 0, dx != 0 || dy != 0, (float) (_board.Area.Left + x * _board.CellWidth),
                 (float) (_board.Area.Top + y * _board.CellHeight));
             // 万有引力定律：F引 = GMm/r²
             //var offsetSqure = x * x + y * y;

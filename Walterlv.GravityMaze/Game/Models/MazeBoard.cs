@@ -128,6 +128,19 @@ namespace Walterlv.GravityMaze.Game
             return (0f, 0f);
         }
 
+        public (float xPosition, float yPosition) GetDestinationPosition(float column, float row)
+        {
+            var columnOffset = EndColumnIndex + 0.5f - column;
+            var rowOffset = EndRowIndex + 0.5f - row;
+            var offsetSqure = columnOffset * columnOffset + rowOffset * rowOffset;
+            if (offsetSqure <= 0.25)
+            {
+                return (EndColumnIndex + 0.5f, EndRowIndex + 0.5f);
+            }
+
+            return (0f, 0f);
+        }
+
         public void Add(float column, float row) => Holes.Add(new Hole(column, row));
         public IEnumerator GetEnumerator() => Holes.GetEnumerator();
     }
