@@ -5,6 +5,7 @@ using Microsoft.Graphics.Canvas.UI;
 using Walterlv.GravityMaze.Game.Framework;
 using Windows.Devices.Sensors;
 using Windows.Foundation;
+using Windows.Graphics.Display;
 using Microsoft.Graphics.Canvas.Effects;
 using static System.Math;
 

@@ -6,6 +6,7 @@ using System.IO;
 using Walterlv.GravityMaze.Game;
 using Walterlv.GravityMaze.Game.Framework;
 using Windows.Foundation;
+using Windows.Graphics.Display;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -34,6 +35,12 @@ namespace Walterlv.GravityMaze.Pages
             SizeChanged += OnSizeChanged;
             Window.Current.CoreWindow.KeyDown += OnKeyDown;
             Window.Current.CoreWindow.KeyUp += OnKeyUp;
+            DisplayInformation.GetForCurrentView().OrientationChanged += OnOrientationChanged;
+        }
+
+        private void OnOrientationChanged(DisplayInformation sender, object e)
+        {
+            
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
