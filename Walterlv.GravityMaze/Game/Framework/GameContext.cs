@@ -9,12 +9,13 @@ namespace Walterlv.GravityMaze.Game.Framework
         public float PixelsPerMetre { get; } = 400f;
         public float[] Orientation { get; } = {1f, 1f, 1f};
         public bool IsPortrait { get; set; } = false;
+        public bool IsMobile { get; set; } = false;
 
         public (float x, float y, float z) TranslateForOrientation(float x, float y, float z)
         {
-            if (IsPortrait)
+            if (IsMobile)
             {
-                return (y * Orientation[0], x * Orientation[1], z * Orientation[2]);
+                return (-y, x, z);
             }
             else
             {

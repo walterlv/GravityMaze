@@ -8,6 +8,7 @@ using Walterlv.GravityMaze.Game.Framework;
 using Windows.Foundation;
 using Windows.Graphics.Display;
 using Windows.System;
+using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -38,6 +39,11 @@ namespace Walterlv.GravityMaze.Pages
             var displayInformation = DisplayInformation.GetForCurrentView();
             UpdateOrientation(displayInformation.CurrentOrientation);
             displayInformation.OrientationChanged += OnOrientationChanged;
+
+            if (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
+            {
+                _context.IsMobile = true;
+            }
         }
 
         private void OnOrientationChanged(DisplayInformation sender, object e)
