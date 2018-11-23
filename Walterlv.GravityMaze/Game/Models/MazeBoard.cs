@@ -90,6 +90,11 @@ namespace Walterlv.GravityMaze.Game
                     (float) (Area.Top + CellHeight * (hole.Row + 0.5f)),
                     (float) (CellWidth / 2), (float) (CellWidth / 2), Colors.Black);
             }
+
+            ds.FillEllipse(
+                (float) (Area.Left + CellWidth * (EndColumnIndex + 0.5f)),
+                (float) (Area.Top + CellHeight * (EndRowIndex + 0.5f)),
+                (float) (CellWidth / 2), (float) (CellWidth / 2), Colors.Orange);
         }
 
         public (bool left, bool up) GetWallInfo(int column, int row)
@@ -98,6 +103,7 @@ namespace Walterlv.GravityMaze.Game
             {
                 return (true, true);
             }
+
             var data = _mazeData[row];
             var leftFlag = 1 << (ColumnCount - column) * 2 + 1;
             var upFlag = 1 << (ColumnCount - column) * 2;
