@@ -59,9 +59,10 @@ namespace Walterlv.GravityMaze.Game.Models
         private void Accelerometer_ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs e)
         {
             AccelerometerReading reading = e.Reading;
-            _xAxis = (float) reading.AccelerationX;
-            _yAxis = (float) reading.AccelerationY;
-            _zAxis = (float) reading.AccelerationZ;
+            var orientation = Context.Orientation;
+            _xAxis = (float) reading.AccelerationX * orientation[0];
+            _yAxis = (float) reading.AccelerationY * orientation[1];
+            _zAxis = (float) reading.AccelerationZ * orientation[2];
         }
 
         protected override void OnUpdate(CanvasTimingInformation timing)
@@ -309,7 +310,7 @@ namespace Walterlv.GravityMaze.Game.Models
         {
             if (_accelerometer != null)
             {
-                return ((float) (-_yAxis * PI / 2), (float) (-_xAxis * PI / 2));
+                return ((float) (_xAxis * PI / 2), (float) (-_yAxis * PI / 2));
             }
             else
             {

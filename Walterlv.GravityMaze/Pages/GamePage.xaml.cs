@@ -35,12 +35,41 @@ namespace Walterlv.GravityMaze.Pages
             SizeChanged += OnSizeChanged;
             Window.Current.CoreWindow.KeyDown += OnKeyDown;
             Window.Current.CoreWindow.KeyUp += OnKeyUp;
-            DisplayInformation.GetForCurrentView().OrientationChanged += OnOrientationChanged;
+            var displayInformation = DisplayInformation.GetForCurrentView();
+            UpdateOrientation(displayInformation.CurrentOrientation);
+            displayInformation.OrientationChanged += OnOrientationChanged;
         }
 
         private void OnOrientationChanged(DisplayInformation sender, object e)
         {
-            
+            UpdateOrientation(sender.CurrentOrientation);
+        }
+
+        private void UpdateOrientation(DisplayOrientations orientation)
+        {
+            switch (orientation)
+            {
+                case DisplayOrientations.Landscape:
+                    _context.Orientation[0] = 1;
+                    _context.Orientation[1] = 1;
+                    _context.Orientation[2] = 1;
+                    break;
+                case DisplayOrientations.Portrait:
+                    _context.Orientation[0] = 1;
+                    _context.Orientation[1] = -1;
+                    _context.Orientation[2] = 1;
+                    break;
+                case DisplayOrientations.LandscapeFlipped:
+                    _context.Orientation[0] = -1;
+                    _context.Orientation[1] = -1;
+                    _context.Orientation[2] = 1;
+                    break;
+                case DisplayOrientations.PortraitFlipped:
+                    _context.Orientation[0] = -1;
+                    _context.Orientation[1] = 1;
+                    _context.Orientation[2] = 1;
+                    break;
+            }
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
