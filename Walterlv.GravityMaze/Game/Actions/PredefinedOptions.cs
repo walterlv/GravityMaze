@@ -47,7 +47,7 @@ namespace Walterlv.GravityMaze.Game.Actions
                 ) {{2f, 2f}, {3f, 4f}, {4f, 2f}, {5f, 3f}}
             },
             {
-                "4", new MazeBoard(1, 0, 7, 1,
+                "4", new MazeBoard(0, 1, 7, 1,
                     0b_1111_0111_0111_0101_10,
                     0b_1101_1100_1111_0101_10,
                     0b_1100_0010_0010_0111_10,
@@ -60,7 +60,7 @@ namespace Walterlv.GravityMaze.Game.Actions
                 ) {{2f, 3f}, {2f, 5f}, {4f, 1f}, {4f, 4f}, {5f, 3f}}
             },
             {
-                "5", new MazeBoard(1, 0, 5, 7,
+                "5", new MazeBoard(0, 1, 5, 7,
                     0b_1111_0111_1101_1101_10,
                     0b_1101_0110_0111_0111_10,
                     0b_1100_0100_1000_0111_10,

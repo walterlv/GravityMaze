@@ -22,17 +22,38 @@ namespace Walterlv.GravityMaze.Game
             }
         }
 
-        private MazeBoard Board { get; }
+        private MazeBoard Board { get; set; }
+        private Player Player { get; set; }
+        private int Index { get; set; }
 
         public MazeGame()
         {
-            Board = PredefinedOptions.Boards["3"];
-            Player player = new Player(this, Board);
-            AddChildren(Board, player);
+            Index = 1;
+            Reset(Index);
+        }
+
+        private void Reset(int index)
+        {
+            RemoveChildren(Board, Player);
+            Board = PredefinedOptions.Boards[index.ToString("D")];
+            Player = new Player(this, Board);
+            AddChildren(Board, Player);
         }
 
         protected override void OnUpdate(CanvasTimingInformation timing)
         {
+            if (Player.EnteredAHole)
+            {
+                // 失败。
+                Reset(Index);
+            }
+            else if (Player.EnteredDestination)
+            {
+                // 胜利。
+                Index++;
+                Index = Index % 6;
+                Reset(Index);
+            }
         }
 
         protected override void OnDraw(CanvasDrawingSession ds)

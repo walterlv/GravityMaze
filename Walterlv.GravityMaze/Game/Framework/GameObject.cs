@@ -34,6 +34,15 @@ namespace Walterlv.GravityMaze.Game.Framework
             }
         }
 
+        protected void RemoveChildren(params IGameObject[] gameObjects)
+        {
+            foreach (var @object in gameObjects)
+            {
+                if (@object is GameObject go) go.Parent = null;
+                if (@object is IGameObject igo) Children.Remove(igo);
+            }
+        }
+
         private T FindFromAncestor<T>(Func<GameObject, T> getField) where T : class
         {
             var value = getField(this);
